@@ -1,37 +1,40 @@
 <script lang="ts">
-	import favicon from '$lib/assets/favicon.svg';
 	import '../app.css';
-	import Button from '$lib/components/ui/button.svelte';
-
+	import Navigation from '$lib/components/Navigation.svelte';
+	
 	let { children } = $props();
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" href="/favicon.png" />
+	<title>NPaulusWebsite</title>
+	<meta name="description" content="Site web personnel - Portfolio, Gaming, Blog et Contact" />
 </svelte:head>
 
-<div class="p-4 space-y-4">
-	<div class="flex gap-2 flex-wrap">
-		<Button>Default</Button>
-		<Button variant="destructive">Destructive</Button>
-		<Button variant="outline">Outline</Button>
-		<Button variant="secondary">Secondary</Button>
-		<Button variant="ghost">Ghost</Button>
-		<Button variant="link">Link</Button>
-	</div>
+<div class="min-h-screen bg-background">
+	<Navigation />
 	
-	<div class="flex gap-2 flex-wrap">
-		<Button size="sm">Small</Button>
-		<Button size="default">Default</Button>
-		<Button size="lg">Large</Button>
-		<Button size="icon">🔥</Button>
-	</div>
+	<main>
+		{@render children()}
+	</main>
 	
-	<div class="flex gap-2 flex-wrap">
-		<Button variant="outline" size="sm">Small Outline</Button>
-		<Button variant="destructive" size="lg">Large Destructive</Button>
-		<Button variant="secondary" class="px-8">Custom Padding</Button>
-	</div>
+	<footer class="border-t border-border bg-muted/50 mt-16">
+		<div class="container mx-auto px-4 py-8">
+			<div class="flex flex-col md:flex-row items-center justify-between">
+				<div class="flex items-center space-x-2 mb-4 md:mb-0">
+					<span class="text-2xl">🚀</span>
+					<span class="font-semibold text-foreground">NPaulusWebsite</span>
+				</div>
+				
+				<div class="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 text-sm text-muted-foreground">
+					<p>&copy; 2024 NPaulusWebsite. Tous droits réservés.</p>
+					<div class="flex space-x-4">
+						<a href="/contact" class="hover:text-foreground transition-colors">Contact</a>
+						<a href="/blog" class="hover:text-foreground transition-colors">Blog</a>
+						<a href="/portfolio" class="hover:text-foreground transition-colors">Portfolio</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</footer>
 </div>
-
-{@render children()}
