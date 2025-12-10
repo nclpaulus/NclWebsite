@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Button from '$lib/components/ui/button.svelte';
 </script>
 
 <svelte:head>
@@ -93,6 +94,51 @@
 					<span class="px-3 py-1 bg-background border rounded-full text-sm">Nintendo Switch</span>
 					<span class="px-3 py-1 bg-background border rounded-full text-sm">Xbox</span>
 				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Discovery Section -->
+	<div class="mt-12 bg-card border rounded-lg p-8">
+		<div class="text-center">
+			<h2 class="text-3xl font-bold mb-4 text-primary">🎲 Découverte de Jeux</h2>
+			<p class="text-lg text-muted-foreground mb-6">
+				Explorez notre sélection de 15 jeux gratuits choisis au hasard parmi des milliers de titres.
+				Filtrez par genre, plateforme ou trouvez votre prochaine perle rare !
+			</p>
+			<Button onclick={() => window.location.href = '/gaming/discovery'} class="text-lg px-6 py-3">
+				<div class="flex items-center space-x-2">
+					<span>🎮</span>
+					<span>Découvrir des jeux</span>
+					<span>→</span>
+				</div>
+			</Button>
+		</div>
+	</div>
+
+	<!-- Pokémon Section -->
+	<div class="mt-8 bg-card border rounded-lg p-8">
+		<div class="text-center">
+			<h2 class="text-3xl font-bold mb-4 text-primary">🎮 Pokémon Explorer</h2>
+			<p class="text-lg text-muted-foreground mb-6">
+				Explorez l'univers des 151 Pokémon de la première génération.
+				Filtrez par type, taille, poids et découvrez leurs statistiques détaillées !
+			</p>
+			<div class="flex flex-col sm:flex-row gap-4 justify-center">
+				<Button onclick={() => window.location.href = '/gaming/pokemon'} class="text-lg px-6 py-3">
+					<div class="flex items-center space-x-2">
+						<span>🔍</span>
+						<span>Explorer les Pokémon</span>
+						<span>→</span>
+					</div>
+				</Button>
+				<Button onclick={() => window.location.href = '/gaming/pokemon/pikachu'} variant="outline" class="text-lg px-6 py-3">
+					<div class="flex items-center space-x-2">
+						<span>⚡</span>
+						<span>Voir Pikachu</span>
+						<span>→</span>
+					</div>
+				</Button>
 			</div>
 		</div>
 	</div>

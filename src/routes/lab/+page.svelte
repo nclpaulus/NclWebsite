@@ -108,7 +108,7 @@
 								</Button>
 								{#if experiment.liveUrl}
 									<Button variant="ghost" size="sm" asChild>
-										<a href={experiment.liveUrl} target="_blank" rel="noopener noreferrer" aria-label="View live demo">
+										<a href={experiment.liveUrl} target="_blank" rel="noopener noreferrer" aria-label="View live demo of {experiment.title}">
 											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
 											</svg>
@@ -132,14 +132,6 @@
 				</p>
 			</div>
 		{/if}
-
-		<!-- Redirect Notice -->
-		<div class="mt-12 text-center">
-			<p class="text-sm text-muted-foreground">
-				Cette page a été déplacée vers 
-				<a href="/lab" class="text-primary hover:underline">/lab</a>
-			</p>
-		</div>
 	</div>
 </div>
 
