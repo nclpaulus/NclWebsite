@@ -1,87 +1,123 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: hsl(0 0% 100%);
-  --foreground: hsl(222.2 84% 4.9%);
-  --muted: hsl(210 40% 96%);
-  --muted-foreground: hsl(215.4 16.3% 46.9%);
-  --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(222.2 84% 4.9%);
-  --card: hsl(0 0% 100%);
-  --card-foreground: hsl(222.2 84% 4.9%);
-  --border: hsl(214.3 31.8% 91.4%);
-  --input: hsl(214.3 31.8% 91.4%);
-  --primary: hsl(222.2 47.4% 11.2%);
-  --primary-foreground: hsl(210 40% 98%);
-  --secondary: hsl(210 40% 96%);
-  --secondary-foreground: hsl(222.2 84% 4.9%);
-  --accent: hsl(210 40% 96%);
-  --accent-foreground: hsl(222.2 84% 4.9%);
-  --destructive: hsl(0 84.2% 60.2%);
-  --destructive-foreground: hsl(210 40% 98%);
-  --ring: hsl(222.2 84% 4.9%);
-  --radius: 0.5rem;
+	/* Thème par défaut (lambda) */
+	--background: hsl(142, 20%, 98%);
+	--foreground: hsl(142, 20%, 15%);
+	--primary: hsl(142, 76%, 36%);
+	--primary-foreground: hsl(142, 76%, 98%);
+	--secondary: hsl(142, 76%, 95%);
+	--secondary-foreground: hsl(142, 20%, 15%);
+	--muted: hsl(142, 30%, 94%);
+	--muted-foreground: hsl(142, 15%, 45%);
+	--accent: hsl(200, 76%, 75%);
+	--accent-foreground: hsl(200, 76%, 15%);
+	--destructive: hsl(0, 84.2%, 60.2%);
+	--destructive-foreground: hsl(210 40% 98%);
+	--border: hsl(142, 40%, 88%);
+	--input: hsl(142, 40%, 88%);
+	--ring: hsl(142, 76%, 36%);
+	--radius: 0.5rem;
 }
 
-.dark {
-  --background: hsl(222.2 84% 4.9%);
-  --foreground: hsl(210 40% 98%);
-  --muted: hsl(217.2 32.6% 17.5%);
-  --muted-foreground: hsl(215 20.2% 65.1%);
-  --popover: hsl(222.2 84% 4.9%);
-  --popover-foreground: hsl(210 40% 98%);
-  --card: hsl(222.2 84% 4.9%);
-  --card-foreground: hsl(210 40% 98%);
-  --border: hsl(217.2 32.6% 17.5%);
-  --input: hsl(217.2 32.6% 17.5%);
-  --primary: hsl(210 40% 98%);
-  --primary-foreground: hsl(222.2 47.4% 11.2%);
-  --secondary: hsl(217.2 32.6% 17.5%);
-  --secondary-foreground: hsl(210 40% 98%);
-  --accent: hsl(217.2 32.6% 17.5%);
-  --accent-foreground: hsl(210 40% 98%);
-  --destructive: hsl(0 62.8% 30.6%);
-  --destructive-foreground: hsl(210 40% 98%);
-  --ring: hsl(212.7 26.8% 83.9%);
+/* Thèmes de profil - seront appliqués dynamiquement via JavaScript */
+.profile-pro {
+	--background: hsl(220, 20%, 98%);
+	--foreground: hsl(220, 10%, 15%);
+	--primary: hsl(220, 90%, 56%);
+	--primary-foreground: hsl(220, 90%, 98%);
+	--secondary: hsl(220, 14%, 96%);
+	--secondary-foreground: hsl(220, 10%, 15%);
+	--muted: hsl(220, 14%, 96%);
+	--muted-foreground: hsl(220, 10%, 45%);
+	--accent: hsl(220, 84%, 75%);
+	--accent-foreground: hsl(220, 84%, 15%);
+	--border: hsl(220, 30%, 90%);
+	--input: hsl(220, 30%, 90%);
+	--ring: hsl(220, 90%, 56%);
+}
+
+.profile-gamer {
+	--background: hsl(0, 10%, 5%);
+	--foreground: hsl(0, 10%, 95%);
+	--primary: hsl(0, 84%, 60%);
+	--primary-foreground: hsl(0, 84%, 98%);
+	--secondary: hsl(0, 84%, 95%);
+	--secondary-foreground: hsl(0, 10%, 15%);
+	--muted: hsl(0, 10%, 15%);
+	--muted-foreground: hsl(0, 10%, 65%);
+	--accent: hsl(280, 84%, 75%);
+	--accent-foreground: hsl(280, 84%, 15%);
+	--border: hsl(0, 30%, 20%);
+	--input: hsl(0, 30%, 20%);
+	--ring: hsl(0, 84%, 60%);
+}
+
+.profile-lambda {
+	--background: hsl(142, 20%, 98%);
+	--foreground: hsl(142, 20%, 15%);
+	--primary: hsl(142, 76%, 36%);
+	--primary-foreground: hsl(142, 76%, 98%);
+	--secondary: hsl(142, 76%, 95%);
+	--secondary-foreground: hsl(142, 20%, 15%);
+	--muted: hsl(142, 30%, 94%);
+	--muted-foreground: hsl(142, 15%, 45%);
+	--accent: hsl(200, 76%, 75%);
+	--accent-foreground: hsl(200, 76%, 15%);
+	--border: hsl(142, 40%, 88%);
+	--input: hsl(142, 40%, 88%);
+	--ring: hsl(142, 76%, 36%);
 }
 
 @theme inline {
-  /* Radius */
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-
-  /* Colors */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-ring: var(--ring);
+	/* Mapping des couleurs pour Tailwind v4 */
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-radius: var(--radius);
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
+	* {
+		@apply border-border;
+	}
 
-  body {
-    @apply bg-background text-foreground;
-  }
+	body {
+		@apply bg-background text-foreground;
+		transition:
+			background-color 0.3s ease,
+			color 0.3s ease;
+	}
+}
+
+/* Animations de transition de thème */
+.profile-transition {
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Styles spécifiques aux profils */
+.profile-pro .hero-gradient {
+	background: linear-gradient(135deg, hsl(220, 90%, 56%) 0%, hsl(220, 70%, 85%) 100%);
+}
+
+.profile-gamer .hero-gradient {
+	background: linear-gradient(135deg, hsl(0, 84%, 60%) 0%, hsl(280, 84%, 45%) 100%);
+}
+
+.profile-lambda .hero-gradient {
+	background: linear-gradient(135deg, hsl(142, 76%, 36%) 0%, hsl(200, 76%, 55%) 100%);
 }
