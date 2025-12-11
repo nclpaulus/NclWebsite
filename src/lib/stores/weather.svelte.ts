@@ -80,17 +80,17 @@ function createWeatherStore() {
 	// Get current location
 	async function getCurrentLocation(): Promise<Location> {
 		console.log('getCurrentLocation called');
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			if (!navigator.geolocation) {
-				console.log('Geolocation not supported, using Paris');
-				resolve({ lat: 50.6325, lon: 5.5797 });
+				console.log('Geolocation not supported, using Liège');
+				resolve({ lat: 50.6325, lon: 5.5797, city: 'Liège', country: 'BE' });
 				return;
 			}
 
 			console.log('Requesting geolocation...');
 			const timeoutId = setTimeout(() => {
-				console.log('Geolocation timeout, rejecting');
-				reject(new Error('Geolocation timeout'));
+				console.log('Geolocation timeout, using Liège as fallback');
+				resolve({ lat: 50.6325, lon: 5.5797, city: 'Liège', country: 'BE' });
 			}, 5000); // 5 second timeout
 
 			navigator.geolocation.getCurrentPosition(
@@ -105,7 +105,8 @@ function createWeatherStore() {
 						resolve(location);
 					} catch (error) {
 						console.error('Reverse geocode error:', error);
-						reject(error);
+						// Use Liège as fallback if reverse geocode fails
+						resolve({ lat: 50.6325, lon: 5.5797, city: 'Liège', country: 'BE' });
 					}
 				},
 				(error) => {
@@ -113,16 +114,17 @@ function createWeatherStore() {
 					console.error('Geolocation error:', error);
 					switch (error.code) {
 						case error.PERMISSION_DENIED:
-							console.error('Permission de géolocalisation refusée');
+							console.error('Permission de géolocalisation refusée, utilisation de Liège');
 							break;
 						case error.POSITION_UNAVAILABLE:
-							console.error('Position indisponible');
+							console.error('Position indisponible, utilisation de Liège');
 							break;
 						case error.TIMEOUT:
-							console.error("Délai d'attente dépassé");
+							console.error("Délai d'attente dépassé, utilisation de Liège");
 							break;
 					}
-					reject(error);
+					// Always resolve with Liège instead of rejecting
+					resolve({ lat: 50.6325, lon: 5.5797, city: 'Liège', country: 'BE' });
 				}
 			);
 		});

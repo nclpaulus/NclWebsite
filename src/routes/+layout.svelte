@@ -4,6 +4,7 @@
 	import { profile, hasProfile, profileInfo } from '$lib/stores/profile';
 	import Navigation from '$lib/components/Navigation.svelte';
 	import ProfileSelector from '$lib/components/ProfileSelector.svelte';
+	import WeatherWidget from '$lib/components/weather/WeatherWidget.svelte';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 
@@ -47,6 +48,9 @@
 		<ProfileSelector />
 	{:else}
 		<Navigation />
+
+		<!-- Weather Widget -->
+		<WeatherWidget position="bottom-right" size="md" />
 
 		<main>
 			{@render children()}
