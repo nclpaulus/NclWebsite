@@ -95,7 +95,7 @@ export const load: PageServerLoad = async ({ params, setHeaders }) => {
 	try {
 		// Fetch Pokémon details
 		const pokemonResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
-		
+
 		if (!pokemonResponse.ok) {
 			if (pokemonResponse.status === 404) {
 				throw error(404, `Pokémon "${pokemonName}" non trouvé`);

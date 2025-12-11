@@ -15,6 +15,7 @@
 		{ href: '/', label: 'Accueil', icon: '🏠' },
 		{ href: '/lab', label: 'Lab', icon: '🧪' },
 		{ href: '/projects', label: 'Projets', icon: '🚀' },
+		{ href: '/weather', label: 'Météo', icon: '🌤️' },
 		{ href: '/contact', label: 'Contact', icon: '📧' }
 	];
 
@@ -34,9 +35,9 @@
 	<div class="container mx-auto px-4">
 		<div class="flex items-center justify-between h-16">
 			<!-- Logo -->
-			<Logo 
-				size="md" 
-				withText={true} 
+			<Logo
+				size="md"
+				withText={true}
 				href={page.url.pathname === '/' ? undefined : '/'}
 				fetchPriority="high"
 				ariaCurrent={isActive('/') ? 'page' : undefined}

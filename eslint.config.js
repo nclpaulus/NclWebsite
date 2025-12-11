@@ -30,6 +30,13 @@ export default defineConfig(
 		}
 	},
 	{
+		files: ['**/node_modules/**'],
+		rules: {
+			// Ignore deprecation warnings from external dependencies
+			'no-console': 'off'
+		}
+	},
+	{
 		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
 		languageOptions: {
 			parserOptions: {

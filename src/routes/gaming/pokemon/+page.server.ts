@@ -57,7 +57,7 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 	try {
 		// Fetch the first 151 Pokémon (original generation)
 		const pokemonListResponse = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
-		
+
 		if (!pokemonListResponse.ok) {
 			throw new Error(`Failed to fetch Pokémon list: ${pokemonListResponse.status}`);
 		}
@@ -77,8 +77,8 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 
 		// Extract all unique types
 		const allTypes = new Set<string>();
-		pokemonDetails.forEach(pokemon => {
-			pokemon.types.forEach(typeInfo => {
+		pokemonDetails.forEach((pokemon) => {
+			pokemon.types.forEach((typeInfo) => {
 				allTypes.add(typeInfo.type.name);
 			});
 		});
@@ -94,7 +94,7 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 
 		const types: Type[] = typeInfo
 			.filter(Boolean)
-			.map((type: any) => ({
+			.map((type: { name: string; url: string }) => ({
 				name: type.name,
 				url: type.url
 			}))
@@ -107,7 +107,7 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 		};
 	} catch (error) {
 		console.error('Failed to load Pokémon data:', error);
-		
+
 		// Return empty data if API fails
 		return {
 			pokemon: [],

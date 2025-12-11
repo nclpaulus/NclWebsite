@@ -39,7 +39,6 @@
 	interface PageData {
 		pokemon: Pokemon[];
 		types: Type[];
-		totalCount: number;
 	}
 
 	let { data }: { data: PageData } = $props();
@@ -57,27 +56,25 @@
 
 		// Filter by type
 		if (selectedType !== 'all') {
-			filtered = filtered.filter(pokemon =>
-				pokemon.types.some(typeInfo => typeInfo.type.name === selectedType)
+			filtered = filtered.filter((pokemon) =>
+				pokemon.types.some((typeInfo) => typeInfo.type.name === selectedType)
 			);
 		}
 
 		// Filter by height
-		filtered = filtered.filter(pokemon =>
-			pokemon.height >= minHeight && pokemon.height <= maxHeight
+		filtered = filtered.filter(
+			(pokemon) => pokemon.height >= minHeight && pokemon.height <= maxHeight
 		);
 
 		// Filter by weight
-		filtered = filtered.filter(pokemon =>
-			pokemon.weight >= minWeight && pokemon.weight <= maxWeight
+		filtered = filtered.filter(
+			(pokemon) => pokemon.weight >= minWeight && pokemon.weight <= maxWeight
 		);
 
 		// Filter by search query
 		if (searchQuery.trim()) {
 			const query = searchQuery.toLowerCase();
-			filtered = filtered.filter(pokemon =>
-				pokemon.name.toLowerCase().includes(query)
-			);
+			filtered = filtered.filter((pokemon) => pokemon.name.toLowerCase().includes(query));
 		}
 
 		return filtered.sort((a, b) => a.id - b.id);
@@ -118,18 +115,6 @@
 	function getPokemonId(id: number): string {
 		return id.toString().padStart(3, '0');
 	}
-
-	function getStatName(statName: string): string {
-		const names: Record<string, string> = {
-			'hp': 'PV',
-			'attack': 'Attaque',
-			'defense': 'Défense',
-			'special-attack': 'Attaque Spé',
-			'special-defense': 'Défense Spé',
-			'speed': 'Vitesse'
-		};
-		return names[statName] || statName;
-	}
 </script>
 
 <svelte:head>
@@ -145,15 +130,15 @@
 	<div class="text-center mb-8">
 		<h1 class="text-4xl font-bold mb-4 text-primary">🎮 Pokémon Explorer</h1>
 		<p class="text-lg text-muted-foreground mb-6">
-			Découvrez les 151 Pokémon de la première génération avec des filtres avancés.
-			Explorez leurs statistiques, types et caractéristiques !
+			Découvrez les 151 Pokémon de la première génération avec des filtres avancés. Explorez leurs
+			statistiques, types et caractéristiques !
 		</p>
 	</div>
 
 	<!-- Filters -->
 	<div class="bg-card border rounded-lg p-6 mb-8">
 		<h2 class="text-xl font-semibold mb-4 text-foreground">Filtres</h2>
-		
+
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
 			<!-- Search -->
 			<div>
@@ -171,17 +156,17 @@
 
 			<!-- Type Filter -->
 			<div>
-				<label for="type" class="block text-sm font-medium text-foreground mb-2">
-					Type
-				</label>
+				<label for="type" class="block text-sm font-medium text-foreground mb-2"> Type </label>
 				<select
 					id="type"
 					bind:value={selectedType}
 					class="w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
 				>
 					<option value="all">Tous les types</option>
-					{#each data.types as type}
-						<option value={type.name}>{type.name.charAt(0).toUpperCase() + type.name.slice(1)}</option>
+					{#each data.types as type (type.name)}
+						<option value={type.name}
+							>{type.name.charAt(0).toUpperCase() + type.name.slice(1)}</option
+						>
 					{/each}
 				</select>
 			</div>
@@ -243,7 +228,8 @@
 
 		<!-- Results count -->
 		<div class="text-sm text-muted-foreground">
-			{filteredPokemon.length} Pokémon trouvé{filteredPokemon.length !== 1 ? 's' : ''} sur {data.pokemon.length}
+			{filteredPokemon.length} Pokémon trouvé{filteredPokemon.length !== 1 ? 's' : ''} sur {data
+				.pokemon.length}
 		</div>
 	</div>
 
@@ -252,14 +238,14 @@
 		<div class="text-center py-12">
 			<div class="text-6xl mb-4">🔍</div>
 			<h3 class="text-xl font-semibold text-foreground mb-2">Aucun Pokémon trouvé</h3>
-			<p class="text-muted-foreground">
-				Essayez de modifier vos filtres pour trouver des Pokémon.
-			</p>
+			<p class="text-muted-foreground">Essayez de modifier vos filtres pour trouver des Pokémon.</p>
 		</div>
 	{:else}
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 			{#each filteredPokemon as pokemon (pokemon.id)}
-				<div class="bg-card border rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 group">
+				<div
+					class="bg-card border rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 group"
+				>
 					<!-- Pokemon Header -->
 					<div class="bg-linear-to-r from-primary/20 to-secondary/20 p-4 text-center">
 						<div class="text-sm text-muted-foreground mb-1">
@@ -268,11 +254,15 @@
 						<h3 class="text-lg font-bold text-foreground capitalize mb-2">
 							{pokemon.name}
 						</h3>
-						
+
 						<!-- Types -->
 						<div class="flex justify-center gap-2 mb-3">
-							{#each pokemon.types as typeInfo}
-								<span class="{getTypeColor(typeInfo.type.name)} text-white text-xs px-2 py-1 rounded-full capitalize">
+							{#each pokemon.types as typeInfo (typeInfo.type.name)}
+								<span
+									class="{getTypeColor(
+										typeInfo.type.name
+									)} text-white text-xs px-2 py-1 rounded-full capitalize"
+								>
 									{typeInfo.type.name}
 								</span>
 							{/each}
@@ -324,7 +314,10 @@
 
 						<!-- View Details Button -->
 						<Button variant="outline" size="sm" class="w-full mt-3">
-							<a href="/gaming/pokemon/{pokemon.name}" class="flex items-center justify-center space-x-1">
+							<a
+								href="/gaming/pokemon/{pokemon.name}"
+								class="flex items-center justify-center space-x-1"
+							>
 								<span>Voir détails</span>
 								<span>→</span>
 							</a>

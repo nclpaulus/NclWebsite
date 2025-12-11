@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button.svelte';
-	import { page } from '$app/state';
 
 	interface PokemonDetails {
 		id: number;
@@ -85,7 +84,6 @@
 	interface PageData {
 		pokemon: PokemonDetails;
 		types: TypeInfo[];
-		evolutionChain: any;
 	}
 
 	let { data }: { data: PageData } = $props();
@@ -103,14 +101,14 @@
 			immunities: new Set<string>()
 		};
 
-		data.types.forEach(type => {
-			type.damage_relations.double_damage_from.forEach(dmg => {
+		data.types.forEach((type) => {
+			type.damage_relations.double_damage_from.forEach((dmg) => {
 				effectiveness.weaknesses.add(dmg.name);
 			});
-			type.damage_relations.half_damage_from.forEach(dmg => {
+			type.damage_relations.half_damage_from.forEach((dmg) => {
 				effectiveness.resistances.add(dmg.name);
 			});
-			type.damage_relations.no_damage_from.forEach(dmg => {
+			type.damage_relations.no_damage_from.forEach((dmg) => {
 				effectiveness.immunities.add(dmg.name);
 			});
 		});
@@ -165,24 +163,24 @@
 
 	function getStatName(statName: string): string {
 		const names: Record<string, string> = {
-			'hp': 'PV',
-			'attack': 'Attaque',
-			'defense': 'Défense',
+			hp: 'PV',
+			attack: 'Attaque',
+			defense: 'Défense',
 			'special-attack': 'Attaque Spé',
 			'special-defense': 'Défense Spé',
-			'speed': 'Vitesse'
+			speed: 'Vitesse'
 		};
 		return names[statName] || statName;
 	}
 
 	function getStatColor(statName: string): string {
 		const colors: Record<string, string> = {
-			'hp': 'bg-red-500',
-			'attack': 'bg-orange-500',
-			'defense': 'bg-blue-500',
+			hp: 'bg-red-500',
+			attack: 'bg-orange-500',
+			defense: 'bg-blue-500',
 			'special-attack': 'bg-purple-500',
 			'special-defense': 'bg-green-500',
-			'speed': 'bg-yellow-500'
+			speed: 'bg-yellow-500'
 		};
 		return colors[statName] || 'bg-gray-500';
 	}
@@ -191,32 +189,59 @@
 		return Math.min((baseStat / 255) * 100, 100);
 	}
 
+	interface Move {
+		move: {
+			name: string;
+			url: string;
+		};
+		version_group_details: Array<{
+			level_learned_at: number;
+			move_learn_method: {
+				name: string;
+				url: string;
+			};
+			version_group: {
+				name: string;
+				url: string;
+			};
+		}>;
+	}
+
+	interface LevelUpMove {
+		name: string;
+		level: number;
+		url: string;
+	}
+
 	// Get moves learned by level up
 	let levelUpMoves = $derived.by(() => {
 		return data.pokemon.moves
-			.filter((move: any) => 
-				move.version_group_details.some((detail: any) => 
-					detail.move_learn_method.name === 'level-up' && 
-					detail.version_group.name === 'red-blue'
+			.filter((move: Move) =>
+				move.version_group_details.some(
+					(detail) =>
+						detail.move_learn_method.name === 'level-up' && detail.version_group.name === 'red-blue'
 				)
 			)
-			.map((move: any) => {
-				const levelUpDetail = move.version_group_details.find((detail: any) => 
-					detail.move_learn_method.name === 'level-up' && 
-					detail.version_group.name === 'red-blue'
+			.map((move: Move) => {
+				const levelUpDetail = move.version_group_details.find(
+					(detail) =>
+						detail.move_learn_method.name === 'level-up' && detail.version_group.name === 'red-blue'
 				);
 				return {
 					name: move.move.name,
-					level: levelUpDetail?.level_learned_at || 0
+					level: levelUpDetail?.level_learned_at || 0,
+					url: move.move.url
 				};
 			})
-			.sort((a: any, b: any) => a.level - b.level)
+			.sort((a: LevelUpMove, b: LevelUpMove) => a.level - b.level)
 			.slice(0, 10); // Show first 10 moves
 	});
 </script>
 
 <svelte:head>
-	<title>{data.pokemon.name.charAt(0).toUpperCase() + data.pokemon.name.slice(1)} - Pokémon Explorer</title>
+	<title
+		>{data.pokemon.name.charAt(0).toUpperCase() + data.pokemon.name.slice(1)} - Pokémon Explorer</title
+	>
 	<meta
 		name="description"
 		content="Découvrez les statistiques, capacités et faiblesses de {data.pokemon.name}"
@@ -232,18 +257,26 @@
 		<h1 class="text-4xl font-bold mb-4 text-primary capitalize">
 			{data.pokemon.name}
 		</h1>
-		
+
 		<!-- Types -->
 		<div class="flex justify-center gap-2 mb-4">
-			{#each data.pokemon.types as typeInfo}
-				<span class="{getTypeColor(typeInfo.type.name)} text-white px-3 py-1 rounded-full text-sm capitalize">
+			{#each data.pokemon.types as typeInfo (typeInfo.type.name)}
+				<span
+					class="{getTypeColor(
+						typeInfo.type.name
+					)} text-white px-3 py-1 rounded-full text-sm capitalize"
+				>
 					{typeInfo.type.name}
 				</span>
 			{/each}
 		</div>
 
 		<!-- Navigation -->
-		<Button onclick={() => window.location.href = '/gaming/pokemon'} variant="outline" class="mb-6">
+		<Button
+			onclick={() => (window.location.href = '/gaming/pokemon')}
+			variant="outline"
+			class="mb-6"
+		>
 			← Retour à l'explorateur
 		</Button>
 	</div>
@@ -255,26 +288,26 @@
 			<div class="bg-card border rounded-lg p-6">
 				<div class="text-center mb-4">
 					<div class="flex justify-center space-x-2 mb-4">
-						<Button 
-							variant={selectedSprite === 'front' ? 'default' : 'outline'} 
+						<Button
+							variant={selectedSprite === 'front' ? 'default' : 'outline'}
 							size="sm"
-							onclick={() => selectedSprite = 'front'}
+							onclick={() => (selectedSprite = 'front')}
 						>
 							Face
 						</Button>
-						<Button 
-							variant={selectedSprite === 'back' ? 'default' : 'outline'} 
+						<Button
+							variant={selectedSprite === 'back' ? 'default' : 'outline'}
 							size="sm"
-							onclick={() => selectedSprite = 'back'}
+							onclick={() => (selectedSprite = 'back')}
 						>
 							Dos
 						</Button>
 					</div>
-					
+
 					<div class="relative h-48 bg-muted rounded-lg flex items-center justify-center">
 						<img
-							src={selectedSprite === 'front' 
-								? data.pokemon.sprites.other['official-artwork'].front_default 
+							src={selectedSprite === 'front'
+								? data.pokemon.sprites.other['official-artwork'].front_default
 								: data.pokemon.sprites.back_default}
 							alt={data.pokemon.name}
 							class="w-32 h-32 object-contain"
@@ -303,7 +336,7 @@
 			<div class="bg-card border rounded-lg p-6">
 				<h2 class="text-xl font-semibold mb-4 text-foreground">Capacités</h2>
 				<div class="space-y-2">
-					{#each data.pokemon.abilities as ability}
+					{#each data.pokemon.abilities as ability (ability.ability.name)}
 						<div class="flex items-center justify-between p-2 bg-muted rounded">
 							<span class="capitalize font-medium">{ability.ability.name.replace('-', ' ')}</span>
 							{#if ability.is_hidden}
@@ -320,24 +353,36 @@
 			<!-- Tab Navigation -->
 			<div class="bg-card border rounded-lg p-2">
 				<div class="flex space-x-2">
-					<Button 
-						variant={showStats ? 'default' : 'ghost'} 
+					<Button
+						variant={showStats ? 'default' : 'ghost'}
 						class="flex-1"
-						onclick={() => { showStats = true; showMoves = false; showWeaknesses = false; }}
+						onclick={() => {
+							showStats = true;
+							showMoves = false;
+							showWeaknesses = false;
+						}}
 					>
 						Statistiques
 					</Button>
-					<Button 
-						variant={showMoves ? 'default' : 'ghost'} 
+					<Button
+						variant={showMoves ? 'default' : 'ghost'}
 						class="flex-1"
-						onclick={() => { showStats = false; showMoves = true; showWeaknesses = false; }}
+						onclick={() => {
+							showStats = false;
+							showMoves = true;
+							showWeaknesses = false;
+						}}
 					>
 						Capacités
 					</Button>
-					<Button 
-						variant={showWeaknesses ? 'default' : 'ghost'} 
+					<Button
+						variant={showWeaknesses ? 'default' : 'ghost'}
 						class="flex-1"
-						onclick={() => { showStats = false; showMoves = false; showWeaknesses = true; }}
+						onclick={() => {
+							showStats = false;
+							showMoves = false;
+							showWeaknesses = true;
+						}}
 					>
 						Faiblesses
 					</Button>
@@ -349,15 +394,17 @@
 				<div class="bg-card border rounded-lg p-6">
 					<h2 class="text-xl font-semibold mb-4 text-foreground">Statistiques de combat</h2>
 					<div class="space-y-3">
-						{#each data.pokemon.stats as stat}
+						{#each data.pokemon.stats as stat (stat.stat.name)}
 							<div class="space-y-1">
 								<div class="flex justify-between text-sm">
 									<span class="font-medium">{getStatName(stat.stat.name)}</span>
 									<span class="font-bold">{stat.base_stat}</span>
 								</div>
 								<div class="w-full bg-muted rounded-full h-2">
-									<div 
-										class="{getStatColor(stat.stat.name)} h-2 rounded-full transition-all duration-500"
+									<div
+										class="{getStatColor(
+											stat.stat.name
+										)} h-2 rounded-full transition-all duration-500"
 										style="width: {getStatWidth(stat.base_stat)}%"
 									></div>
 								</div>
@@ -372,7 +419,7 @@
 				<div class="bg-card border rounded-lg p-6">
 					<h2 class="text-xl font-semibold mb-4 text-foreground">Capacités (Niv. 1-100)</h2>
 					<div class="space-y-2">
-						{#each levelUpMoves as move}
+						{#each levelUpMoves as move (move.name)}
 							<div class="flex items-center justify-between p-2 bg-muted rounded">
 								<span class="capitalize font-medium">{move.name.replace('-', ' ')}</span>
 								<span class="text-sm text-muted-foreground">Niv. {move.level}</span>
@@ -386,13 +433,17 @@
 			{#if showWeaknesses}
 				<div class="bg-card border rounded-lg p-6">
 					<h2 class="text-xl font-semibold mb-4 text-foreground">Efficacité des types</h2>
-					
+
 					{#if typeEffectiveness.immunities.size > 0}
 						<div class="mb-4">
 							<h3 class="font-medium text-foreground mb-2">Immunités</h3>
 							<div class="flex flex-wrap gap-2">
-								{#each Array.from(typeEffectiveness.immunities) as immunity}
-									<span class="{getEffectivenessColor('immunity')} text-white px-2 py-1 rounded text-sm capitalize">
+								{#each Array.from(typeEffectiveness.immunities) as immunity (immunity)}
+									<span
+										class="{getEffectivenessColor(
+											'immunity'
+										)} text-white px-2 py-1 rounded text-sm capitalize"
+									>
 										{immunity}
 									</span>
 								{/each}
@@ -404,8 +455,12 @@
 						<div class="mb-4">
 							<h3 class="font-medium text-foreground mb-2">Résistances</h3>
 							<div class="flex flex-wrap gap-2">
-								{#each Array.from(typeEffectiveness.resistances) as resistance}
-									<span class="{getEffectivenessColor('resistance')} text-white px-2 py-1 rounded text-sm capitalize">
+								{#each Array.from(typeEffectiveness.resistances) as resistance (resistance)}
+									<span
+										class="{getEffectivenessColor(
+											'resistance'
+										)} text-white px-2 py-1 rounded text-sm capitalize"
+									>
 										{resistance}
 									</span>
 								{/each}
@@ -417,8 +472,12 @@
 						<div>
 							<h3 class="font-medium text-foreground mb-2">Faiblesses</h3>
 							<div class="flex flex-wrap gap-2">
-								{#each Array.from(typeEffectiveness.weaknesses) as weakness}
-									<span class="{getEffectivenessColor('weakness')} text-white px-2 py-1 rounded text-sm capitalize">
+								{#each Array.from(typeEffectiveness.weaknesses) as weakness (weakness)}
+									<span
+										class="{getEffectivenessColor(
+											'weakness'
+										)} text-white px-2 py-1 rounded text-sm capitalize"
+									>
 										{weakness}
 									</span>
 								{/each}

@@ -22,7 +22,7 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 
 	try {
 		const response = await fetch('https://www.freetogame.com/api/games');
-		
+
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
@@ -34,10 +34,10 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 		const randomGames = shuffled.slice(0, 15);
 
 		// Get unique genres for filtering
-		const genres = [...new Set(allGames.map(game => game.genre))].sort();
-		
+		const genres = [...new Set(allGames.map((game) => game.genre))].sort();
+
 		// Get unique platforms for filtering
-		const platforms = [...new Set(allGames.map(game => game.platform))].sort();
+		const platforms = [...new Set(allGames.map((game) => game.platform))].sort();
 
 		return {
 			games: randomGames,
@@ -47,7 +47,7 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 		};
 	} catch (error) {
 		console.error('Failed to fetch games:', error);
-		
+
 		// Return empty data if API fails
 		return {
 			games: [],

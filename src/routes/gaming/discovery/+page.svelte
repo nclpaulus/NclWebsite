@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { page } from '$app/state';
-	import { invalidate, goto } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import Button from '$lib/components/ui/button.svelte';
-	import { onMount } from 'svelte';
 
 	interface Game {
 		id: number;
@@ -20,7 +18,6 @@
 
 	interface PageData {
 		games: Game[];
-		allGames: Game[];
 		genres: string[];
 		platforms: string[];
 	}
@@ -38,21 +35,24 @@
 
 		// Filter by genre
 		if (selectedGenre !== 'all') {
-			games = games.filter(game => game.genre.toLowerCase() === selectedGenre.toLowerCase());
+			games = games.filter((game) => game.genre.toLowerCase() === selectedGenre.toLowerCase());
 		}
 
 		// Filter by platform
 		if (selectedPlatform !== 'all') {
-			games = games.filter(game => game.platform.toLowerCase() === selectedPlatform.toLowerCase());
+			games = games.filter(
+				(game) => game.platform.toLowerCase() === selectedPlatform.toLowerCase()
+			);
 		}
 
 		// Filter by search query
 		if (searchQuery.trim()) {
 			const query = searchQuery.toLowerCase();
-			games = games.filter(game =>
-				game.title.toLowerCase().includes(query) ||
-				game.genre.toLowerCase().includes(query) ||
-				game.short_description.toLowerCase().includes(query)
+			games = games.filter(
+				(game) =>
+					game.title.toLowerCase().includes(query) ||
+					game.genre.toLowerCase().includes(query) ||
+					game.short_description.toLowerCase().includes(query)
 			);
 		}
 
@@ -107,7 +107,9 @@
 		<Button onclick={refreshGames} disabled={isLoading} class="mb-6">
 			{#if isLoading}
 				<div class="flex items-center space-x-2">
-					<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+					<div
+						class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"
+					></div>
 					<span>Chargement...</span>
 				</div>
 			{:else}
@@ -139,16 +141,14 @@
 
 			<!-- Genre Filter -->
 			<div>
-				<label for="genre" class="block text-sm font-medium text-foreground mb-2">
-					Genre
-				</label>
+				<label for="genre" class="block text-sm font-medium text-foreground mb-2"> Genre </label>
 				<select
 					id="genre"
 					bind:value={selectedGenre}
 					class="w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
 				>
 					<option value="all">Tous les genres</option>
-					{#each data.genres as genre}
+					{#each data.genres as genre (genre)}
 						<option value={genre}>{genre}</option>
 					{/each}
 				</select>
@@ -165,7 +165,7 @@
 					class="w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
 				>
 					<option value="all">Toutes les plateformes</option>
-					{#each data.platforms as platform}
+					{#each data.platforms as platform (platform)}
 						<option value={platform}>{platform}</option>
 					{/each}
 				</select>
@@ -174,7 +174,10 @@
 
 		<!-- Results count -->
 		<div class="mt-4 text-sm text-muted-foreground">
-			{filteredGames.length} jeu{filteredGames.length !== 1 ? 'x' : ''} trouvé{filteredGames.length !== 1 ? 's' : ''}
+			{filteredGames.length} jeu{filteredGames.length !== 1 ? 'x' : ''} trouvé{filteredGames.length !==
+			1
+				? 's'
+				: ''}
 		</div>
 	</div>
 
@@ -190,7 +193,9 @@
 	{:else}
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			{#each filteredGames as game (game.id)}
-				<div class="bg-card border rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 group">
+				<div
+					class="bg-card border rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 group"
+				>
 					<!-- Game Thumbnail -->
 					<div class="relative h-48 bg-muted overflow-hidden">
 						<img
@@ -199,18 +204,23 @@
 							class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
 							onerror={(e) => {
 								const target = e.target as HTMLImageElement;
-								target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzY2NiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LXNpemU9IjE4IiBmaWxsPSIjOTk5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+SW1hZ2Ugbm9uIGRpc3BvbmlibGU8L3RleHQ+PC9zdmc+';
+								target.src =
+									'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzY2NiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LXNpemU9IjE4IiBmaWxsPSIjOTk5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+SW1hZ2Ugbm9uIGRpc3BvbmlibGU8L3RleHQ+PC9zdmc+';
 							}}
 						/>
-						
+
 						<!-- Platform Badge -->
-						<div class="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded-md text-xs flex items-center space-x-1">
+						<div
+							class="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded-md text-xs flex items-center space-x-1"
+						>
 							<span>{getPlatformIcon(game.platform)}</span>
 							<span>{game.platform}</span>
 						</div>
-						
+
 						<!-- Genre Badge -->
-						<div class="absolute top-2 left-2 bg-primary/90 text-primary-foreground px-2 py-1 rounded-md text-xs">
+						<div
+							class="absolute top-2 left-2 bg-primary/90 text-primary-foreground px-2 py-1 rounded-md text-xs"
+						>
 							{game.genre}
 						</div>
 					</div>
@@ -220,7 +230,7 @@
 						<h3 class="font-semibold text-lg text-foreground mb-2 line-clamp-1">
 							{game.title}
 						</h3>
-						
+
 						<p class="text-sm text-muted-foreground mb-3 line-clamp-2">
 							{game.short_description}
 						</p>

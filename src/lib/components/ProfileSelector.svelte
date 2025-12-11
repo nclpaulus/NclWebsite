@@ -3,7 +3,7 @@
 	import type { Profile } from '$lib/services/profileDB';
 	import Button from '$lib/components/ui/button.svelte';
 	import Logo from '$lib/components/Logo.svelte';
-	import { fly, fade, scale } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 
 	const profiles = [
@@ -103,10 +103,10 @@
 		try {
 			// Attendre la fin de la transition spécifique au profil
 			const transitionDuration = getTransitionDuration(profileId);
-			await new Promise(resolve => setTimeout(resolve, transitionDuration));
-			
+			await new Promise((resolve) => setTimeout(resolve, transitionDuration));
+
 			await profile.switch(profileId);
-			
+
 			// Naviguer vers la route spécifique du profil
 			const targetRoute = getProfileRoute(profileId);
 			await goto(targetRoute);
@@ -124,10 +124,10 @@
 		<!-- Header -->
 		<div class="text-center mb-12">
 			<div class="flex justify-center mb-8 animate-fade-in">
-				<Logo 
-					size="xl" 
-					fetchPriority="high" 
-					class="drop-shadow-lg hover:drop-shadow-xl transition-all duration-300" 
+				<Logo
+					size="xl"
+					fetchPriority="high"
+					class="drop-shadow-lg hover:drop-shadow-xl transition-all duration-300"
 				/>
 			</div>
 
@@ -136,8 +136,9 @@
 			</h1>
 
 			<p class="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-				Bienvenue sur votre plateforme interactive. Choisissez votre profil et explorez un univers personnalisé,
-				adapté à vos besoins et passions. Professionnel, gamer ou simple curieux, trouvez ici l'expérience qui vous correspond.
+				Bienvenue sur votre plateforme interactive. Choisissez votre profil et explorez un univers
+				personnalisé, adapté à vos besoins et passions. Professionnel, gamer ou simple curieux,
+				trouvez ici l'expérience qui vous correspond.
 			</p>
 
 			<div class="flex items-center justify-center space-x-2 text-sm text-muted-foreground">
@@ -162,7 +163,9 @@
 				>
 					<div
 						class="{p.bgStyle} border-2 {p.borderColor} {p.hoverBorderColor} rounded-2xl p-8 h-full {p.shadowColor} {p.hoverShadowColor} transition-all duration-300"
-						out:fade={selectedProfile === p.id ? { duration: getTransitionDuration(p.id), easing: (t: number) => t * t } : undefined}
+						out:fade={selectedProfile === p.id
+							? { duration: getTransitionDuration(p.id), easing: (t: number) => t * t }
+							: undefined}
 					>
 						<!-- Profile Icon -->
 						<div class="flex justify-center mb-6">

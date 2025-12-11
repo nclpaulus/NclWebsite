@@ -5,4 +5,4 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-export type WithElementRef<T = {}> = T & { ref?: HTMLElement | null | undefined };
+export type WithElementRef<T = object> = T & { ref?: HTMLElement | null | undefined };

@@ -17,7 +17,9 @@
 	<div class="max-w-6xl mx-auto">
 		<!-- Header -->
 		<div class="text-center mb-12">
-			<h1 class="text-4xl md:text-5xl font-bold mb-4 bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+			<h1
+				class="text-4xl md:text-5xl font-bold mb-4 bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent"
+			>
 				🧪 Lab & Experiments
 			</h1>
 			<p class="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
@@ -28,42 +30,57 @@
 
 		<!-- Filter Tags -->
 		<div class="mb-8 flex flex-wrap gap-2 justify-center">
-			<Badge variant="secondary" class="cursor-pointer hover:bg-primary hover:text-primary-foreground">
+			<Badge
+				variant="secondary"
+				class="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+			>
 				Tous ({experiments.length})
 			</Badge>
-			<Badge variant="outline" class="cursor-pointer hover:bg-primary hover:text-primary-foreground">
+			<Badge
+				variant="outline"
+				class="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+			>
 				Démos ({getExperimentsByType('demo').length})
 			</Badge>
-			<Badge variant="outline" class="cursor-pointer hover:bg-primary hover:text-primary-foreground">
+			<Badge
+				variant="outline"
+				class="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+			>
 				Outils ({getExperimentsByType('tool').length})
 			</Badge>
-			<Badge variant="outline" class="cursor-pointer hover:bg-primary hover:text-primary-foreground">
+			<Badge
+				variant="outline"
+				class="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+			>
 				POCs ({getExperimentsByType('poc').length})
 			</Badge>
 		</div>
 
 		<!-- Experiments Grid -->
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-			{#each experiments as experiment}
+			{#each experiments as experiment (experiment.slug)}
 				<Card class="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
 					<CardContent class="p-6">
 						<!-- Header -->
 						<div class="flex items-start justify-between mb-4">
 							<div class="flex-1">
-								<h3 class="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
+								<h3
+									class="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors"
+								>
 									{experiment.title}
 								</h3>
 								<div class="flex items-center gap-2 mb-3">
-									<Badge 
-										variant={experiment.type === 'demo' ? 'default' : experiment.type === 'tool' ? 'secondary' : 'outline'}
+									<Badge
+										variant={experiment.type === 'demo'
+											? 'default'
+											: experiment.type === 'tool'
+												? 'secondary'
+												: 'outline'}
 										class="text-xs"
 									>
 										{experiment.type}
 									</Badge>
-									<Badge 
-										variant="outline" 
-										class="text-xs"
-									>
+									<Badge variant="outline" class="text-xs">
 										{experiment.difficulty}
 									</Badge>
 								</div>
@@ -89,7 +106,7 @@
 
 						<!-- Tech Stack -->
 						<div class="flex flex-wrap gap-1 mb-4">
-							{#each experiment.techStack.slice(0, 3) as tech}
+							{#each experiment.techStack.slice(0, 3) as tech (tech)}
 								<Badge variant="outline" class="text-xs">{tech}</Badge>
 							{/each}
 							{#if experiment.techStack.length > 3}
@@ -100,7 +117,11 @@
 						<!-- Footer -->
 						<div class="flex items-center justify-between pt-4 border-t">
 							<span class="text-xs text-muted-foreground">
-								{new Date(experiment.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
+								{new Date(experiment.date).toLocaleDateString('fr-FR', {
+									day: 'numeric',
+									month: 'short',
+									year: 'numeric'
+								})}
 							</span>
 							<div class="flex gap-2">
 								<Button variant="outline" size="sm" asChild>
@@ -108,9 +129,19 @@
 								</Button>
 								{#if experiment.liveUrl}
 									<Button variant="ghost" size="sm" asChild>
-										<a href={experiment.liveUrl} target="_blank" rel="noopener noreferrer" aria-label="View live demo of {experiment.title}">
+										<a
+											href={experiment.liveUrl}
+											target="_blank"
+											rel="noopener noreferrer"
+											aria-label="View live demo of {experiment.title}"
+										>
 											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+												/>
 											</svg>
 										</a>
 									</Button>
