@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import Button from '$lib/components/ui/button.svelte';
 	import ProfileSwitcher from '$lib/components/ProfileSwitcher.svelte';
+	import Logo from '$lib/components/Logo.svelte';
 	import { cn } from '$lib/utils';
 
 	interface NavItem {
@@ -31,14 +32,13 @@
 	<div class="container mx-auto px-4">
 		<div class="flex items-center justify-between h-16">
 			<!-- Logo -->
-			<a
+			<Logo 
+				size="md" 
+				withText={true} 
 				href={page.url.pathname === '/' ? undefined : '/'}
-				class="flex items-center space-x-2 text-xl font-bold text-foreground hover:text-primary transition-colors"
-				aria-current={isActive('/') ? 'page' : undefined}
-			>
-				<span>🚀</span>
-				<span>NPaulusWebsite</span>
-			</a>
+				fetchPriority="high"
+				ariaCurrent={isActive('/') ? 'page' : undefined}
+			/>
 
 			<!-- Desktop Navigation -->
 			<div class="hidden md:flex items-center space-x-6">

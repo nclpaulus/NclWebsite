@@ -4,10 +4,10 @@
 </script>
 
 <svelte:head>
-	<title>NPaulusWebsite - Développeur Web & Créateur</title>
+	<title>Ma Plateforme, votre Découverte - NPaulusWebsite</title>
 	<meta
 		name="description"
-		content="Bienvenue sur mon site web personnel. Découvrez mon portfolio, mes passions gaming et mon blog technique."
+		content="Bienvenue sur votre plateforme interactive. Choisissez votre profil et explorez un univers personnalisé, adapté à vos besoins et passions. Professionnel, gamer ou simple curieux, trouvez ici l'expérience qui vous correspond."
 	/>
 </svelte:head>
 
@@ -31,12 +31,11 @@
 				<h1
 					class="text-5xl md:text-7xl font-bold bg-linear-to-r from-foreground to-primary bg-clip-text text-transparent"
 				>
-					NPaulusWebsite
+					Ma Plateforme, votre Découverte
 				</h1>
 
 				<p class="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-					Développeur web passionné, créateur de contenu et gamer dans l'âme. Bienvenue sur mon
-					espace personnel où je partage mes projets, mes réflexions et mes passions.
+					Professionnel, gamer ou simple curieux, trouvez ici l'expérience qui vous correspond.
 				</p>
 			</div>
 

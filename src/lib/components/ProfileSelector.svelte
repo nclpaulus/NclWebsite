@@ -2,6 +2,9 @@
 	import { profile } from '$lib/stores/profile';
 	import type { Profile } from '$lib/services/profileDB';
 	import Button from '$lib/components/ui/button.svelte';
+	import Logo from '$lib/components/Logo.svelte';
+	import { fly, fade, scale } from 'svelte/transition';
+	import { goto } from '$app/navigation';
 
 	const profiles = [
 		{
@@ -60,17 +63,56 @@
 
 	let selectedProfile: Profile | null = $state(null);
 	let isLoading = $state(false);
+	let isTransitioning = $state(false);
+
+	// Obtenir la durée de transition pour un profil spécifique
+	function getTransitionDuration(profileId: Profile): number {
+		switch (profileId) {
+			case 'pro':
+				return 800;
+			case 'gamer':
+				return 600;
+			case 'lambda':
+				return 1000;
+			default:
+				return 500;
+		}
+	}
+
+	// Routes spécifiques pour chaque profil
+	function getProfileRoute(profileId: Profile): string {
+		switch (profileId) {
+			case 'pro':
+				return '/portfolio';
+			case 'gamer':
+				return '/gaming';
+			case 'lambda':
+				return '/';
+			default:
+				return '/';
+		}
+	}
 
 	async function selectProfile(profileId: Profile) {
-		if (isLoading) return;
+		if (isLoading || isTransitioning) return;
 
 		isLoading = true;
+		isTransitioning = true;
 		selectedProfile = profileId;
 
 		try {
+			// Attendre la fin de la transition spécifique au profil
+			const transitionDuration = getTransitionDuration(profileId);
+			await new Promise(resolve => setTimeout(resolve, transitionDuration));
+			
 			await profile.switch(profileId);
+			
+			// Naviguer vers la route spécifique du profil
+			const targetRoute = getProfileRoute(profileId);
+			await goto(targetRoute);
 		} catch (error) {
 			console.error('Failed to switch profile:', error);
+			isTransitioning = false;
 		} finally {
 			isLoading = false;
 		}
@@ -81,17 +123,21 @@
 	<div class="container mx-auto max-w-6xl">
 		<!-- Header -->
 		<div class="text-center mb-12">
-			<div class="inline-flex items-center justify-center w-20 h-20 bg-primary rounded-full mb-6">
-				<span class="text-4xl">🚀</span>
+			<div class="flex justify-center mb-8 animate-fade-in">
+				<Logo 
+					size="xl" 
+					fetchPriority="high" 
+					class="drop-shadow-lg hover:drop-shadow-xl transition-all duration-300" 
+				/>
 			</div>
 
 			<h1 class="text-4xl md:text-6xl font-bold text-foreground mb-4">
-				Bienvenue sur NPaulusWebsite
+				Ma Plateforme, votre Découverte
 			</h1>
 
 			<p class="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-				Choisissez votre profil pour découvrir une expérience adaptée à vos centres d'intérêt.
-				Chaque profil offre un contenu unique et une interface personnalisée.
+				Bienvenue sur votre plateforme interactive. Choisissez votre profil et explorez un univers personnalisé,
+				adapté à vos besoins et passions. Professionnel, gamer ou simple curieux, trouvez ici l'expérience qui vous correspond.
 			</p>
 
 			<div class="flex items-center justify-center space-x-2 text-sm text-muted-foreground">
@@ -116,6 +162,7 @@
 				>
 					<div
 						class="{p.bgStyle} border-2 {p.borderColor} {p.hoverBorderColor} rounded-2xl p-8 h-full {p.shadowColor} {p.hoverShadowColor} transition-all duration-300"
+						out:fade={selectedProfile === p.id ? { duration: getTransitionDuration(p.id), easing: (t: number) => t * t } : undefined}
 					>
 						<!-- Profile Icon -->
 						<div class="flex justify-center mb-6">
@@ -235,25 +282,15 @@
 	@keyframes fadeIn {
 		from {
 			opacity: 0;
-			transform: translateY(20px);
+			transform: translateY(-20px) scale(0.9);
 		}
 		to {
 			opacity: 1;
-			transform: translateY(0);
+			transform: translateY(0) scale(1);
 		}
 	}
 
-	.group {
-		animation: fadeIn 0.6s ease-out;
-	}
-
-	.group:nth-child(1) {
-		animation-delay: 0.1s;
-	}
-	.group:nth-child(2) {
-		animation-delay: 0.2s;
-	}
-	.group:nth-child(3) {
-		animation-delay: 0.3s;
+	.animate-fade-in {
+		animation: fadeIn 0.8s ease-out;
 	}
 </style>
