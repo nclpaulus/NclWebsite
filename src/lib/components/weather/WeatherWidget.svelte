@@ -9,11 +9,7 @@
 		autoInitialize?: boolean;
 	}
 
-	let {
-		position = 'bottom-right',
-		size = 'md',
-		autoInitialize = true
-	}: Props = $props();
+	let { position = 'bottom-right', size = 'md', autoInitialize = true }: Props = $props();
 
 	let isExpanded = $state(false);
 	let widgetRef: HTMLDivElement;
@@ -110,30 +106,34 @@
 
 <svelte:window onclick={handleClickOutside} onkeydown={handleKeydown} />
 
-<div
-	bind:this={widgetRef}
-	class="{positionClasses[position]} z-50"
->
+<div bind:this={widgetRef} class="{positionClasses[position]} z-50">
 	<!-- Collapsed State -->
 	{#if !isExpanded}
 		<button
 			onclick={toggleWidget}
-			class="{sizeClasses[size].collapsed} bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center cursor-pointer border-2 border-background"
+			class="{sizeClasses[size]
+				.collapsed} bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center cursor-pointer border-2 border-background"
 			disabled={loading && !weatherData}
-			title={loading ? 'Chargement...' : error ? 'Erreur météo' : weatherData ? `${weatherData.temp}°C - ${weatherData.description}` : 'Météo'}
+			title={loading
+				? 'Chargement...'
+				: error
+					? 'Erreur météo'
+					: weatherData
+						? `${weatherData.temp}°C - ${weatherData.description}`
+						: 'Météo'}
 		>
 			{#if loading && !weatherData}
 				<div class="animate-spin {sizeClasses[size].icon}">⏳</div>
 			{:else if error}
-				<div class="{sizeClasses[size].icon}">❌</div>
+				<div class={sizeClasses[size].icon}>❌</div>
 			{:else if weatherData}
 				<img
 					src={getWeatherIcon(weatherData.icon)}
 					alt={weatherData.description}
-					class="{size === 'sm' ? 'w-6 h-6' : size === 'md' ? 'w-8 h-8' : 'w-10 h-10'}"
+					class={size === 'sm' ? 'w-6 h-6' : size === 'md' ? 'w-8 h-8' : 'w-10 h-10'}
 				/>
 			{:else}
-				<div class="{sizeClasses[size].icon}">🌤️</div>
+				<div class={sizeClasses[size].icon}>🌤️</div>
 			{/if}
 		</button>
 	{/if}
@@ -145,7 +145,10 @@
 			transition:scale={{ duration: 200 }}
 		>
 			<!-- Header with close button -->
-			<div class="flex justify-between items-start mb-3" transition:slide={{ duration: 150, delay: 50 }}>
+			<div
+				class="flex justify-between items-start mb-3"
+				transition:slide={{ duration: 150, delay: 50 }}
+			>
 				{#if loading && !weatherData}
 					<!-- Loading skeleton -->
 					<div class="flex items-center gap-2">
@@ -157,7 +160,9 @@
 					</div>
 				{:else if error}
 					<div class="flex items-center gap-2">
-						<div class="w-10 h-10 bg-destructive/20 rounded flex items-center justify-center">❌</div>
+						<div class="w-10 h-10 bg-destructive/20 rounded flex items-center justify-center">
+							❌
+						</div>
 						<div>
 							<h3 class="font-semibold text-destructive">Erreur</h3>
 							<p class="text-sm text-muted-foreground">{error}</p>
@@ -171,12 +176,14 @@
 							class="w-10 h-10"
 						/>
 						<div>
-							<h3 class="font-semibold text-foreground">{weatherData.city}, {weatherData.country}</h3>
+							<h3 class="font-semibold text-foreground">
+								{weatherData.city}, {weatherData.country}
+							</h3>
 							<p class="text-sm text-muted-foreground capitalize">{weatherData.description}</p>
 						</div>
 					</div>
 				{/if}
-				
+
 				<button
 					onclick={() => (isExpanded = false)}
 					class="text-muted-foreground hover:text-foreground transition-colors"
