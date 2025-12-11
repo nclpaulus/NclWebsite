@@ -51,7 +51,7 @@ export const projects: Project[] = [
 		context: 'Projet fictif pour démontrer la capacité à créer une solution business complète',
 		client: 'AutoPro Garage (fictif)',
 		techStack: ['SvelteKit', 'TypeScript', 'Node.js', 'SQLite', 'Tailwind CSS'],
-		liveUrl: '/projects/garage-management-system',
+		liveUrl: '/garage',
 		githubUrl: 'https://github.com/nclpaulus/garage-management',
 		type: 'mock',
 		features: [
@@ -62,7 +62,7 @@ export const projects: Project[] = [
 			'Notifications clients SMS/Email'
 		],
 		date: '2024-12-05',
-		status: 'prototype',
+		status: 'completed',
 		tags: ['business', 'management', 'booking', 'mock-client', 'fullstack']
 	},
 	{
@@ -73,7 +73,7 @@ export const projects: Project[] = [
 		context:
 			"Clone simplifié de Trello/ClickUp démontrant les compétences en développement d'applications collaboratives",
 		techStack: ['SvelteKit', 'TypeScript', 'WebSocket', 'PostgreSQL', 'Docker'],
-		liveUrl: '/projects/task-manager-pro',
+		liveUrl: '/kanban',
 		githubUrl: 'https://github.com/nclpaulus/task-manager',
 		type: 'demo',
 		features: [
@@ -83,8 +83,8 @@ export const projects: Project[] = [
 			'Export PDF/Excel',
 			'API REST complète'
 		],
-		date: '2024-11-30',
-		status: 'in-progress',
+		date: '2024-12-11',
+		status: 'completed',
 		tags: ['productivity', 'kanban', 'realtime', 'collaboration', 'api']
 	},
 	{
@@ -93,7 +93,7 @@ export const projects: Project[] = [
 		description: 'Dashboard météo avec prévisions détaillées et visualisations interactives',
 		context: 'Exploration des APIs météo et techniques de data visualization avec SvelteKit',
 		techStack: ['SvelteKit', 'TypeScript', 'OpenWeather API', 'D3.js', 'PWA'],
-		liveUrl: '/projects/weather-dashboard',
+		liveUrl: '/weather',
 		githubUrl: 'https://github.com/nclpaulus/weather-dashboard',
 		type: 'demo',
 		features: [
