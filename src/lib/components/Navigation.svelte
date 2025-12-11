@@ -13,6 +13,8 @@
 
 	const navItems: NavItem[] = [
 		{ href: '/', label: 'Accueil', icon: '🏠' },
+		{ href: '/lab', label: 'Lab', icon: '🧪' },
+		{ href: '/projects', label: 'Projets', icon: '🚀' },
 		{ href: '/contact', label: 'Contact', icon: '📧' }
 	];
 

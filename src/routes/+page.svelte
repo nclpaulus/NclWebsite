@@ -70,8 +70,8 @@
 					<div class="text-sm text-muted-foreground">Projets réalisés</div>
 				</div>
 				<div class="bg-card border rounded-lg p-6 text-center">
-					<div class="text-3xl font-bold text-primary mb-2">15+</div>
-					<div class="text-sm text-muted-foreground">Articles de blog</div>
+					<div class="text-3xl font-bold text-primary mb-2">5+</div>
+					<div class="text-sm text-muted-foreground">Expériences Lab</div>
 				</div>
 				<div class="bg-card border rounded-lg p-6 text-center">
 					<div class="text-3xl font-bold text-primary mb-2">∞</div>
