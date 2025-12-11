@@ -30,17 +30,17 @@
 			icon: '🎮',
 			description: 'Stats, achievements, communauté',
 			features: ['Statistiques gaming', 'Achievements', 'Communauté'],
-			color: 'bg-red-500',
-			hoverColor: 'hover:bg-red-600',
-			gradient: 'from-red-500 to-purple-700',
-			borderColor: 'border-red-300/50',
-			hoverBorderColor: 'hover:border-red-500/70',
-			shadowColor: 'shadow-red-500/30',
-			hoverShadowColor: 'hover:shadow-red-500/60 hover:shadow-2xl',
+			color: 'bg-orange-600',
+			hoverColor: 'hover:bg-orange-700',
+			gradient: 'from-red-500 to-orange-500',
+			borderColor: 'border-orange-300/50',
+			hoverBorderColor: 'hover:border-orange-500/70',
+			shadowColor: 'shadow-orange-500/30',
+			hoverShadowColor: 'hover:shadow-orange-500/60 hover:shadow-2xl',
 			bgStyle: 'bg-gray-900/90 backdrop-blur-md',
-			featureDot: 'bg-red-500',
+			featureDot: 'bg-orange-500',
 			buttonVariant:
-				'bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 text-white'
+				'bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white'
 		},
 		{
 			id: 'lambda' as Profile,

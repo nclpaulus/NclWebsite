@@ -15,6 +15,8 @@
 	async function switchProfile(newProfile: Profile) {
 		await profile.switch(newProfile);
 		isOpen = false;
+		// Redirection vers la page d'accueil après changement de profil
+		window.location.href = '/';
 	}
 
 	async function clearIndexedDB() {
@@ -99,7 +101,7 @@
 	<!-- Dropdown -->
 	{#if isOpen}
 		<div
-			class="absolute right-0 top-full mt-2 w-56 bg-card border border-border rounded-lg shadow-lg z-50"
+			class="absolute right-0 top-full mt-2 w-56 bg-background border border-border rounded-lg shadow-lg z-50"
 			role="menu"
 		>
 			<div class="p-2">

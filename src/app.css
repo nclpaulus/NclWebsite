@@ -42,17 +42,17 @@
 .profile-gamer {
 	--background: hsl(0, 10%, 5%);
 	--foreground: hsl(0, 10%, 95%);
-	--primary: hsl(0, 84%, 60%);
-	--primary-foreground: hsl(0, 84%, 98%);
-	--secondary: hsl(0, 84%, 95%);
+	--primary: hsl(15, 84%, 60%);
+	--primary-foreground: hsl(15, 84%, 98%);
+	--secondary: hsl(15, 84%, 95%);
 	--secondary-foreground: hsl(0, 10%, 15%);
 	--muted: hsl(0, 10%, 15%);
 	--muted-foreground: hsl(0, 10%, 65%);
-	--accent: hsl(280, 84%, 75%);
-	--accent-foreground: hsl(280, 84%, 15%);
+	--accent: hsl(35, 84%, 75%);
+	--accent-foreground: hsl(35, 84%, 15%);
 	--border: hsl(0, 30%, 20%);
 	--input: hsl(0, 30%, 20%);
-	--ring: hsl(0, 84%, 60%);
+	--ring: hsl(15, 84%, 60%);
 }
 
 .profile-lambda {

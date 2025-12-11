@@ -4,20 +4,32 @@
 	import ProfileSwitcher from '$lib/components/ProfileSwitcher.svelte';
 	import Logo from '$lib/components/Logo.svelte';
 	import { cn } from '$lib/utils';
+	import { profile } from '$lib/stores/profile';
 
-	interface NavItem {
-		href: string;
-		label: string;
-		icon?: string;
-	}
+	// Menus spécifiques par profil
+	const profileNavItems = {
+		pro: [
+			{ href: '/', label: 'Accueil', icon: '🏠' },
+			{ href: '/lab', label: 'Lab', icon: '🧪' },
+			{ href: '/projects', label: 'Projets', icon: '🚀' },
+			{ href: '/contact', label: 'Contact', icon: '📧' }
+		],
+		gamer: [
+			{ href: '/', label: 'Accueil', icon: '🏠' },
+			{ href: '/gaming', label: 'Gaming', icon: '🎮' },
+			{ href: '/gaming/discovery', label: 'Découverte', icon: '🔍' },
+			{ href: '/gaming/pokemon', label: 'Pokémon', icon: '⚡' },
+			{ href: '/contact', label: 'Contact', icon: '📧' }
+		],
+		lambda: [
+			{ href: '/', label: 'Accueil', icon: '🏠' },
+			{ href: '/about', label: 'À propos', icon: '👋' },
+			{ href: '/contact', label: 'Contact', icon: '📧' }
+		]
+	};
 
-	const navItems: NavItem[] = [
-		{ href: '/', label: 'Accueil', icon: '🏠' },
-		{ href: '/lab', label: 'Lab', icon: '🧪' },
-		{ href: '/projects', label: 'Projets', icon: '🚀' },
-		{ href: '/weather', label: 'Météo', icon: '🌤️' },
-		{ href: '/contact', label: 'Contact', icon: '📧' }
-	];
+	// Navigation réactive selon le profil
+	const navItems = $derived($profile ? profileNavItems[$profile] : profileNavItems.lambda);
 
 	const currentPath = $derived(page.url.pathname);
 

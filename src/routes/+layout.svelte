@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { page } from '$app/state';
-	import { profile, hasProfile } from '$lib/stores/profile';
+	import { profile, hasProfile, profileInfo } from '$lib/stores/profile';
 	import Navigation from '$lib/components/Navigation.svelte';
 	import ProfileSelector from '$lib/components/ProfileSelector.svelte';
 	import { onMount } from 'svelte';
@@ -28,13 +28,19 @@
 	<meta name="description" content="Site web personnel - Portfolio, Gaming, Blog et Contact" />
 </svelte:head>
 
-<div class="min-h-screen bg-background profile-transition">
+<div class="min-h-screen bg-background profile-transition {$profile ? `profile-${$profile}` : ''}">
 	{#if isInitializing}
 		<!-- Loading skeleton pendant l'initialisation -->
 		<div class="flex items-center justify-center min-h-screen">
 			<div class="flex flex-col items-center space-y-4">
 				<div class="w-16 h-16 bg-primary rounded-full animate-pulse"></div>
-				<div class="text-muted-foreground">Chargement de votre profil...</div>
+				<div class="text-muted-foreground">
+					{#if $profile}
+						Chargement du profil {profileInfo[$profile].name}...
+					{:else}
+						Chargement de votre profil...
+					{/if}
+				</div>
 			</div>
 		</div>
 	{:else if showProfileSelector}
