@@ -8,6 +8,7 @@
 	import WeatherWidget from '$lib/components/weather/WeatherWidget.svelte';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
+	import { Toaster } from 'svelte-sonner';
 
 	let { children } = $props();
 	let isInitializing = $state(true);
@@ -90,3 +91,5 @@
 		</footer>
 	{/if}
 </div>
+
+<Toaster richColors position="top-right" />

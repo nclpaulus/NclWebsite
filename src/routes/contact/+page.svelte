@@ -1,6 +1,10 @@
 <script lang="ts">
 	/** Page de contact avec formulaire et coordonnées. */
 	import Button from '$lib/components/ui/button/button.svelte';
+	import { enhance } from '$app/forms';
+	import { toast } from 'svelte-sonner';
+
+	let loading = false;
 </script>
 
 <svelte:head>
@@ -19,7 +23,23 @@
 		<div class="space-y-6">
 			<h2 class="text-2xl font-semibold text-foreground">Envoyez un message</h2>
 
-			<form class="space-y-4">
+			<form
+				class="space-y-4"
+				method="POST"
+				use:enhance={() => {
+					loading = true;
+					return async ({ result }) => {
+						loading = false;
+						if (result.type === 'success' && result.data?.success) {
+							toast.success('Message envoyé avec succès !');
+							// Réinitialiser le formulaire
+							document.querySelector('form')?.reset();
+						} else if (result.type === 'failure') {
+							toast.error(String(result.data?.error ?? 'Une erreur est survenue'));
+						}
+					};
+				}}
+			>
 				<div>
 					<label for="name" class="block text-sm font-medium text-foreground mb-2"> Nom </label>
 					<input
@@ -72,7 +92,19 @@
 					></textarea>
 				</div>
 
-				<Button type="submit" class="w-full">Envoyer le message</Button>
+				<!-- Honeypot field pour la protection anti-spam -->
+				<input
+					type="text"
+					name="website"
+					class="hidden"
+					tabindex="-1"
+					autocomplete="off"
+					aria-hidden="true"
+				/>
+
+				<Button type="submit" class="w-full" disabled={loading}>
+					{loading ? 'Envoi en cours...' : 'Envoyer le message'}
+				</Button>
 			</form>
 		</div>
 

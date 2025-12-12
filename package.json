@@ -50,6 +50,8 @@
 		"class-variance-authority": "^0.7.1",
 		"leaflet": "^1.9.4",
 		"mermaid": "^11.12.2",
-		"sharp": "^0.34.5"
+		"resend": "^6.6.0",
+		"sharp": "^0.34.5",
+		"svelte-sonner": "^1.0.7"
 	}
 }
