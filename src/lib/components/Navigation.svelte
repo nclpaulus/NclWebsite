@@ -20,6 +20,7 @@
 			{ href: '/', label: 'Accueil', icon: '🏠' },
 			{ href: '/lab', label: 'Lab', icon: '🧪' },
 			{ href: '/projects', label: 'Projets', icon: '🚀' },
+			{ href: '/architecture', label: 'Architecture', icon: '🏗️' },
 			{ href: '/contact', label: 'Contact', icon: '📧' }
 		],
 		gamer: [
