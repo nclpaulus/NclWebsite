@@ -1,4 +1,5 @@
 <script lang="ts">
+	/** Page de contact avec formulaire et coordonnées. */
 	import Button from '$lib/components/ui/button/button.svelte';
 </script>
 

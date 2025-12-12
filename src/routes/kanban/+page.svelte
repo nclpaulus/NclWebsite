@@ -1,4 +1,5 @@
 <script lang="ts">
+	/** Page liste des tableaux Kanban avec création et gestion. */
 	import { onMount } from 'svelte';
 	import { kanbanStore } from '$lib/stores/kanban.svelte';
 	import type { Board } from '$lib/types/kanban';

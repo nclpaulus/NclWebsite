@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 
+/* Thèmes et couleurs personnalisés pour l'application */
 @custom-variant dark (&:is(.dark *));
 
 :root {

@@ -1,4 +1,5 @@
 <script lang="ts">
+	/** Page détail d’un Pokémon avec stats, types et chaîne d’évolution. */
 	import Button from '$lib/components/ui/button/button.svelte';
 
 	interface PokemonDetails {

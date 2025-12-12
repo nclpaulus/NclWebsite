@@ -1,4 +1,5 @@
 <script lang="ts">
+	/** Dashboard garage avec statistiques et aperçu des activités. */
 	import { onMount } from 'svelte';
 	import { appointmentStore } from '$lib/stores/garage/appointments.svelte';
 	import { inventoryStore } from '$lib/stores/garage/inventory.svelte';

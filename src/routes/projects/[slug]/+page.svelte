@@ -1,4 +1,5 @@
 <script lang="ts">
+	/** Page détail d’un projet avec navigation dynamique et métadonnées. */
 	import { page } from '$app/state';
 	import { projects, getProjectBySlug } from '$lib/data/projects';
 	import Badge from '$lib/components/ui/badge/badge.svelte';

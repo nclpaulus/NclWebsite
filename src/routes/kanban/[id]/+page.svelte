@@ -1,4 +1,5 @@
 <script lang="ts">
+	/** Page détail d’un tableau Kanban avec gestion d’erreur et loading. */
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { kanbanStore } from '$lib/stores/kanban.svelte';

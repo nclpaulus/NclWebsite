@@ -1,4 +1,5 @@
 <script lang="ts">
+	/** Page de découverte de jeux free-to-game avec filtres et grille. */
 	import { goto } from '$app/navigation';
 	import Button from '$lib/components/ui/button/button.svelte';
 
@@ -265,21 +266,3 @@
 		</div>
 	{/if}
 </div>
-
-<style>
-	.line-clamp-1 {
-		display: -webkit-box;
-		-webkit-line-clamp: 1;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-		line-clamp: 1;
-	}
-
-	.line-clamp-2 {
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-		line-clamp: 2;
-	}
-</style>

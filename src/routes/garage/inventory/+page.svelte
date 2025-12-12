@@ -1,4 +1,5 @@
 <script lang="ts">
+	/** Page inventaire garage avec gestion des pièces, filtres et modals. */
 	import { onMount } from 'svelte';
 	import { inventoryStore } from '$lib/stores/garage/inventory.svelte';
 	import { notificationStore } from '$lib/stores/garage/notifications.svelte';

@@ -1,4 +1,5 @@
 <script lang="ts">
+	/** Page liste des 151 premiers Pokémon avec filtres par type. */
 	import Button from '$lib/components/ui/button/button.svelte';
 
 	interface Pokemon {

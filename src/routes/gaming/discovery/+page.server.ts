@@ -1,5 +1,6 @@
 import type { PageServerLoad } from './$types';
 
+/** Jeu free-to-game provenant de l’API. */
 interface Game {
 	id: number;
 	title: string;
@@ -14,7 +15,7 @@ interface Game {
 	freetogame_profile_url: string;
 }
 
-// Fallback games data when API fails
+/** Jeux de secours si l’API échoue. */
 const fallbackGames: Game[] = [
 	{
 		id: 1,
@@ -57,7 +58,7 @@ const fallbackGames: Game[] = [
 	}
 ];
 
-// Retry function with exponential backoff
+/** Fetch avec retry et backoff exponentiel. */
 async function fetchWithRetry(url: string, maxRetries: number = 3): Promise<Response> {
 	for (let i = 0; i < maxRetries; i++) {
 		try {
@@ -94,6 +95,7 @@ async function fetchWithRetry(url: string, maxRetries: number = 3): Promise<Resp
 	throw new Error('Max retries exceeded');
 }
 
+/** Charge les jeux free-to-game avec cache 1h et fallback. */
 export const load: PageServerLoad = async ({ setHeaders }) => {
 	// Cache the response for 1 hour
 	setHeaders({

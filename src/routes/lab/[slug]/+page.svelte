@@ -1,4 +1,5 @@
 <script lang="ts">
+	/** Page détail d’une expérience technique avec navigation dynamique. */
 	import { page } from '$app/state';
 	import { experiments, getExperimentBySlug } from '$lib/data/experiments';
 	import Badge from '$lib/components/ui/badge/badge.svelte';

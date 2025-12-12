@@ -1,11 +1,13 @@
 import type { PageServerLoad } from './$types';
 
+/** Pokémon de base (liste API). */
 interface Pokemon {
 	id: number;
 	name: string;
 	url: string;
 }
 
+/** Réponse de l’API liste Pokémon. */
 interface PokemonListResponse {
 	count: number;
 	next: string | null;
@@ -13,6 +15,7 @@ interface PokemonListResponse {
 	results: Pokemon[];
 }
 
+/** Détails complets d’un Pokémon. */
 interface PokemonDetails {
 	id: number;
 	name: string;
@@ -43,11 +46,13 @@ interface PokemonDetails {
 	};
 }
 
+/** Type Pokémon (nom et URL). */
 interface Type {
 	name: string;
 	url: string;
 }
 
+/** Charge les 151 premiers Pokémon avec cache 1h et types pour filtres. */
 export const load: PageServerLoad = async ({ setHeaders }) => {
 	// Cache Pokémon data for 1 hour since it rarely changes
 	setHeaders({

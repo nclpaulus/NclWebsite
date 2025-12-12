@@ -1,6 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
 
+/** Détails complets d’un Pokémon (avec capacités, moves, évolution). */
 interface PokemonDetails {
 	id: number;
 	name: string;
@@ -60,6 +61,7 @@ interface PokemonDetails {
 	};
 }
 
+/** Informations sur les faiblesses/résistances d’un type. */
 interface TypeInfo {
 	name: string;
 	damage_relations: {
@@ -84,6 +86,7 @@ interface TypeInfo {
 	};
 }
 
+/** Charge les détails d’un Pokémon spécifique avec types et chaîne d’évolution. */
 export const load: PageServerLoad = async ({ params, setHeaders }) => {
 	// Cache Pokémon data for 1 hour
 	setHeaders({

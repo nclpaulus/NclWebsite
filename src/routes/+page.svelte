@@ -1,4 +1,5 @@
 <script lang="ts">
+	/** Page d'accueil avec navigation adaptative selon le profil (pro/gamer). */
 	import { page } from '$app/state';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { profile } from '$lib/stores/profile';

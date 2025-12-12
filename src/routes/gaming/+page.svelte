@@ -1,4 +1,5 @@
 <script lang="ts">
+	/** Page d’accueil gaming avec liens vers Pokémon et découverte de jeux. */
 	import Button from '$lib/components/ui/button/button.svelte';
 </script>
 

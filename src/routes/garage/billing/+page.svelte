@@ -1,4 +1,5 @@
 <script lang="ts">
+	/** Page facturation garage avec création, gestion et suivi des factures. */
 	import { onMount } from 'svelte';
 	import { billingStore } from '$lib/stores/garage/billing.svelte';
 	import { appointmentStore } from '$lib/stores/garage/appointments.svelte';

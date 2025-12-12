@@ -1,4 +1,5 @@
 <script lang="ts">
+	/** Layout racine avec navigation, sélecteur de profil et thème dynamique. */
 	import '../app.css';
 	import { page } from '$app/state';
 	import { profile, hasProfile, profileInfo } from '$lib/stores/profile';

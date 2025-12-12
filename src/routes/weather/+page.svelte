@@ -1,4 +1,5 @@
 <script lang="ts">
+	/** Page météo avec widget, prévisions, historique et gestion API key. */
 	import { onMount } from 'svelte';
 	import WeatherCard from '$lib/components/weather/WeatherCard.svelte';
 	import ForecastList from '$lib/components/weather/ForecastList.svelte';
@@ -13,17 +14,13 @@
 	let apiKeyMissing = false;
 
 	onMount(async () => {
-		console.log('=== Weather page onMount called ===');
-
 		// Check if API key is configured
 		if (!import.meta.env.VITE_OPENWEATHER_API_KEY) {
-			console.log('API key missing');
 			apiKeyMissing = true;
 			loading = false;
 			return;
 		}
 
-		console.log('API key found, calling initializeWeather');
 		try {
 			await weatherStore.initializeWeather();
 		} catch (err) {

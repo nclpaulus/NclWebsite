@@ -1,4 +1,5 @@
 <script lang="ts">
+	/** Page rendez-vous garage avec calendrier, créneaux et gestion des RDV. */
 	import { onMount } from 'svelte';
 	import { appointmentStore } from '$lib/stores/garage/appointments.svelte';
 	import { notificationStore } from '$lib/stores/garage/notifications.svelte';
