@@ -32,7 +32,7 @@
 </script>
 
 <svelte:head>
-	<title>Kanban Board - NPaulusWebsite</title>
+	<title>Kanban Board - WeCraft</title>
 	<meta
 		name="description"
 		content="Tableau Kanban collaboratif avec drag & drop et gestion de projet"

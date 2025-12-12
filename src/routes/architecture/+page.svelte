@@ -8,7 +8,7 @@
 </script>
 
 <svelte:head>
-	<title>Architecture - NPaulusWebsite</title>
+	<title>Architecture - WeCraft</title>
 	<meta
 		name="description"
 		content="Architecture du projet SvelteKit 5, documentation et bonnes pratiques"
@@ -200,7 +200,7 @@ graph TB
 
 		<!-- CTA -->
 		<div class="text-center">
-			<Button href="https://github.com/votreusername/NPaulusWebsite" target="_blank" class="mb-4">
+			<Button href="https://github.com/votreusername/WeCraft" target="_blank" class="mb-4">
 				Voir le Code Source
 			</Button>
 			<p class="text-sm text-muted-foreground">

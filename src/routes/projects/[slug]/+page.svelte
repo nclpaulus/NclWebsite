@@ -16,7 +16,7 @@
 </script>
 
 <svelte:head>
-	<title>{project?.title || 'Projet'} - Projets - NPaulusWebsite</title>
+	<title>{project?.title || 'Projet'} - Projets - WeCraft</title>
 	<meta name="description" content={project?.description || 'Détail du projet web'} />
 </svelte:head>
 

@@ -119,7 +119,7 @@
 </script>
 
 <svelte:head>
-	<title>Pokémon Explorer - NPaulusWebsite</title>
+	<title>Pokémon Explorer - WeCraft</title>
 	<meta
 		name="description"
 		content="Explorez l'univers Pokémon avec filtres avancés par type, taille et poids"

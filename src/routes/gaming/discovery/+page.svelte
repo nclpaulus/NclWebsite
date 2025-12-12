@@ -90,7 +90,7 @@
 </script>
 
 <svelte:head>
-	<title>Découverte Gaming - NPaulusWebsite</title>
+	<title>Découverte Gaming - WeCraft</title>
 	<meta
 		name="description"
 		content="Découvrez 15 jeux gratuits au hasard parmi une sélection de milliers de jeux"

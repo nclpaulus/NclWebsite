@@ -47,7 +47,7 @@
 </script>
 
 <svelte:head>
-	<title>Météo Interactive - NPaulusWebsite</title>
+	<title>Météo Interactive - WeCraft</title>
 	<meta
 		name="description"
 		content="Explorez les prévisions météo sur 7 jours, cartes interactives, et historique des données avec géolocalisation automatique."

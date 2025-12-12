@@ -7,7 +7,7 @@
 </script>
 
 <svelte:head>
-	<title>Lab - NPaulusWebsite</title>
+	<title>Lab - WeCraft</title>
 	<meta
 		name="description"
 		content="Mon laboratoire d'expériences interactives : démos SvelteKit, outils techniques et POCs"

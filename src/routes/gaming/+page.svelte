@@ -4,7 +4,7 @@
 </script>
 
 <svelte:head>
-	<title>Gaming - NPaulusWebsite</title>
+	<title>Gaming - WeCraft</title>
 	<meta
 		name="description"
 		content="Ma passion pour le gaming et mes expériences dans l'univers du jeu vidéo"

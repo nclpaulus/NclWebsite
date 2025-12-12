@@ -73,7 +73,7 @@
 </script>
 
 <svelte:head>
-	<title>Ma Plateforme, votre Découverte - NPaulusWebsite</title>
+	<title>Ma Plateforme, votre Découverte - WeCraft</title>
 	<meta
 		name="description"
 		content="Bienvenue sur votre plateforme interactive. Choisissez votre profil et explorez un univers personnalisé, adapté à vos besoins et passions. Professionnel, gamer ou simple curieux, trouvez ici l'expérience qui vous correspond."

@@ -16,7 +16,7 @@
 </script>
 
 <svelte:head>
-	<title>{experiment?.title || 'Expérience'} - Lab - NPaulusWebsite</title>
+	<title>{experiment?.title || 'Expérience'} - Lab - WeCraft</title>
 	<meta
 		name="description"
 		content={experiment?.description || "Détail de l'expérience technique"}

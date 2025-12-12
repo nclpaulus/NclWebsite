@@ -4,7 +4,7 @@
 </script>
 
 <svelte:head>
-	<title>Contact - NPaulusWebsite</title>
+	<title>Contact - WeCraft</title>
 	<meta name="description" content="Contactez-moi pour vos projets ou collaborations" />
 </svelte:head>
 
@@ -88,7 +88,7 @@
 					</div>
 					<div>
 						<h3 class="font-medium text-foreground">Email</h3>
-						<p class="text-muted-foreground">contact@npauluswebsite.com</p>
+						<p class="text-muted-foreground">contact@wecraft.com</p>
 					</div>
 				</div>
 

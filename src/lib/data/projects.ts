@@ -5,8 +5,8 @@ import type { Project } from '$lib/types/content';
  */
 export const projects: Project[] = [
 	{
-		slug: 'npaulus-website',
-		title: 'NPaulus Website',
+		slug: 'wecraft',
+		title: 'WeCraft',
 		description: 'Site portfolio personnel avec système de profils dynamiques et dashboard SaaS',
 		context:
 			'Projet personnel visant à créer un site web moderne et polyvalent avec gestion multi-profils',

@@ -1,4 +1,4 @@
-# NPaulusWebsite
+# WeCraft
 
 ![JSDoc Coverage](https://img.shields.io/badge/JSDoc-100%25-brightgreen)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue)
@@ -218,7 +218,7 @@ src/
 
 - **Live Demo**: [votresite.com](https://votresite.com)
 - **Architecture**: [votresite.com/architecture](https://votresite.com/architecture)
-- **Code Source**: [GitHub Repository](https://github.com/votreusername/NPaulusWebsite)
+- **Code Source**: [GitHub Repository](https://github.com/votreusername/WeCraft)
 
 ---
 

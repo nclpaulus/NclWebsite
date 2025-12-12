@@ -37,7 +37,7 @@
 		withText = false,
 		textClass = '',
 		href,
-		ariaLabel = 'NPaulusWebsite Logo',
+		ariaLabel = 'WeCraft Logo',
 		fetchPriority = 'auto',
 		ariaCurrent
 	}: Props = $props();
@@ -59,9 +59,7 @@
 	const logoClass = $derived(
 		`${sizeClasses[size]} transition-all duration-300 hover:scale-110 hover:rotate-3 ${className}`
 	);
-	const imgClass = $derived(
-		`w-full h-full object-contain`
-	);
+	const imgClass = $derived(`w-full h-full object-contain`);
 	const textClassFull = $derived(
 		`${textSizeClasses[size]} font-bold text-foreground hover:text-primary transition-colors ${textClass}`
 	);
@@ -84,7 +82,7 @@
 			src={logoSrc}
 			srcset={logoSrcset}
 			sizes={logoSizes}
-			alt="NPaulusWebsite Logo"
+			alt="WeCraft Logo"
 			class={imgClass}
 			fetchpriority={fetchPriority}
 			loading={fetchPriority === 'high' ? 'eager' : 'lazy'}
@@ -93,6 +91,6 @@
 	</div>
 
 	{#if withText}
-		<span class={textClassFull}>NPaulusWebsite</span>
+		<span class={textClassFull}>WeCraft</span>
 	{/if}
 </svelte:element>

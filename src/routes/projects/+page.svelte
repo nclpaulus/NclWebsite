@@ -7,7 +7,7 @@
 </script>
 
 <svelte:head>
-	<title>Projets - NPaulusWebsite</title>
+	<title>Projets - WeCraft</title>
 	<meta
 		name="description"
 		content="Découvrez mes projets web : applications SaaS, dashboards, et démonstrations techniques"
