@@ -6,6 +6,14 @@
 	import { cn } from '$lib/utils';
 	import { profile } from '$lib/stores/profile';
 
+	/**
+	 * Navigation principale.
+	 *
+	 * - Les items changent selon le profil sélectionné.
+	 * - Gère un menu mobile (toggle) + navigation desktop.
+	 */
+	let isMobileMenuOpen = $state(false);
+
 	// Menus spécifiques par profil
 	const profileNavItems = {
 		pro: [
@@ -39,6 +47,10 @@
 		}
 		return currentPath.startsWith(href);
 	}
+
+	function toggleMobileMenu() {
+		isMobileMenuOpen = !isMobileMenuOpen;
+	}
 </script>
 
 <nav
@@ -50,7 +62,7 @@
 			<Logo
 				size="md"
 				withText={true}
-				href={page.url.pathname === '/' ? undefined : '/'}
+				href={page.url.pathname === '/' ? '/' : '/'}
 				fetchPriority="high"
 				ariaCurrent={isActive('/') ? 'page' : undefined}
 			/>
@@ -59,7 +71,7 @@
 			<div class="hidden md:flex items-center space-x-6">
 				{#each navItems as item (item.href)}
 					<a
-						href={page.url.pathname === item.href ? undefined : item.href}
+						href={item.href}
 						class={cn(
 							'flex items-center space-x-2 text-sm font-medium transition-colors hover:text-primary',
 							isActive(item.href) ? 'text-primary' : 'text-muted-foreground'
@@ -80,7 +92,14 @@
 				<ProfileSwitcher />
 
 				<!-- Mobile Menu Button -->
-				<Button variant="ghost" size="icon" class="md:hidden" aria-label="Menu">
+				<Button
+					variant="ghost"
+					size="icon"
+					class="md:hidden"
+					aria-label="Menu"
+					aria-expanded={isMobileMenuOpen}
+					onclick={toggleMobileMenu}
+				>
 					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
@@ -93,28 +112,31 @@
 			</div>
 		</div>
 
-		<!-- Mobile Navigation (hidden for now) -->
-		<div class="md:hidden border-t border-border">
-			<div class="px-2 pt-2 pb-3 space-y-1">
-				{#each navItems as item (item.href)}
-					<a
-						href={page.url.pathname === item.href ? undefined : item.href}
-						class={cn(
-							'flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium transition-colors',
-							isActive(item.href)
-								? 'bg-primary text-primary-foreground'
-								: 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-						)}
-						aria-current={isActive(item.href) ? 'page' : undefined}
-					>
-						{#if item.icon}
-							<span>{item.icon}</span>
-						{/if}
-						<span>{item.label}</span>
-					</a>
-				{/each}
+		<!-- Mobile Navigation -->
+		{#if isMobileMenuOpen}
+			<div class="md:hidden border-t border-border">
+				<div class="px-2 pt-2 pb-3 space-y-1">
+					{#each navItems as item (item.href)}
+						<a
+							href={item.href}
+							class={cn(
+								'flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium transition-colors',
+								isActive(item.href)
+									? 'bg-primary text-primary-foreground'
+									: 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+							)}
+							aria-current={isActive(item.href) ? 'page' : undefined}
+							onclick={() => (isMobileMenuOpen = false)}
+						>
+							{#if item.icon}
+								<span>{item.icon}</span>
+							{/if}
+							<span>{item.label}</span>
+						</a>
+					{/each}
+				</div>
 			</div>
-		</div>
+		{/if}
 	</div>
 </nav>
 

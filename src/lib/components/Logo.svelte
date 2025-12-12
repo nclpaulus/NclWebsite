@@ -24,6 +24,13 @@
 		ariaCurrent?: string;
 	}
 
+	/**
+	 * Logo.
+	 *
+	 * - Rend un `<img>` responsive (srcset/sizes).
+	 * - Si `href` est fourni, enveloppe dans un lien.
+	 */
+
 	let {
 		size = 'md',
 		class: className = '',

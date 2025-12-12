@@ -2,6 +2,13 @@
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { cn, type WithElementRef } from '$lib/utils.js';
 
+	/**
+	 * CardTitle.
+	 *
+	 * - Titre du Card (typo/styles).
+	 * - Rend un `<div>` pour laisser le choix du balisage via children.
+	 */
+
 	let {
 		ref = $bindable(null),
 		class: className,

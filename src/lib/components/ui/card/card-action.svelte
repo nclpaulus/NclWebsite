@@ -2,6 +2,13 @@
 	import { cn, type WithElementRef } from '$lib/utils.js';
 	import type { HTMLAttributes } from 'svelte/elements';
 
+	/**
+	 * CardAction.
+	 *
+	 * - Zone d'action dans le header (alignée à droite).
+	 * - Rend un `<div>`.
+	 */
+
 	let {
 		ref = $bindable(null),
 		class: className,

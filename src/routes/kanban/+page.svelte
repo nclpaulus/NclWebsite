@@ -9,8 +9,8 @@
 	let loading = $state(true);
 	let showCreateModal = $state(false);
 
-	onMount(() => {
-		kanbanStore.initializeBoards();
+	onMount(async () => {
+		await kanbanStore.init();
 		boards = kanbanStore.get().boards;
 		loading = false;
 	});

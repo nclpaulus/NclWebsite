@@ -2,6 +2,13 @@
 	import { cn, type WithElementRef } from '$lib/utils.js';
 	import type { HTMLAttributes } from 'svelte/elements';
 
+	/**
+	 * CardHeader.
+	 *
+	 * - Conteneur d'en-tête (titre/description/actions).
+	 * - Rend un `<div>`.
+	 */
+
 	let {
 		ref = $bindable(null),
 		class: className,

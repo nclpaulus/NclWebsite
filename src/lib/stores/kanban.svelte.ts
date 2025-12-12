@@ -1,11 +1,11 @@
 import { writable, get as getStoreValue } from 'svelte/store';
 import { SvelteDate } from 'svelte/reactivity';
+import { browser, dev } from '$app/environment';
 import type {
 	Board,
 	Column,
 	Card,
 	User,
-	Label,
 	Comment,
 	KanbanState,
 	BoardFilters,
@@ -19,21 +19,44 @@ import type {
 	CreateCommentRequest,
 	UpdateCommentRequest
 } from '$lib/types/kanban';
+import { kanbanDB, deserializeKanbanState, serializeKanbanState } from '$lib/services/kanbanDB';
+import { generateMockBoards, mockLabels, mockUsers } from '$lib/data/kanbanMock';
 
+/**
+ * Store Kanban (état + mutations).
+ *
+ * Remarque: l'implémentation actuelle utilise des données mock (in-memory) et simule des appels API.
+ * Avant production, il faudra typiquement brancher une persistance (API / DB / localStorage) et
+ * normaliser la sérialisation des dates.
+ */
 interface KanbanStore {
+	/** Abonnement au state (store Svelte). */
 	subscribe: (cb: (value: KanbanState) => void) => () => void;
+
+	/** Initialise le store (IndexedDB si dispo, fallback mock sinon). */
+	init: () => Promise<void>;
+
+	/** Alias historique (compat) : appelle `init()` sans attendre. */
 	initializeBoards: () => void;
+
+	/** CRUD boards. */
 	createBoard: (request: CreateBoardRequest) => Promise<boolean>;
 	updateBoard: (id: string, request: UpdateBoardRequest) => Promise<boolean>;
 	deleteBoard: (id: string) => Promise<boolean>;
 	setCurrentBoard: (id: string) => void;
+
+	/** CRUD colonnes. */
 	createColumn: (boardId: string, request: CreateColumnRequest) => Promise<boolean>;
 	updateColumn: (id: string, request: UpdateColumnRequest) => Promise<boolean>;
 	deleteColumn: (id: string) => Promise<boolean>;
+
+	/** CRUD cartes + déplacement. */
 	createCard: (request: CreateCardRequest) => Promise<boolean>;
 	updateCard: (id: string, request: UpdateCardRequest) => Promise<boolean>;
 	deleteCard: (id: string) => Promise<boolean>;
 	moveCard: (request: MoveCardRequest) => Promise<boolean>;
+
+	/** Commentaires. */
 	addComment: (cardId: string, request: CreateCommentRequest) => Promise<boolean>;
 	updateComment: (
 		cardId: string,
@@ -41,12 +64,18 @@ interface KanbanStore {
 		request: UpdateCommentRequest
 	) => Promise<boolean>;
 	deleteComment: (cardId: string, commentId: string) => Promise<boolean>;
+
+	/** Filtres. */
 	filterCards: (filters: BoardFilters) => void;
+
+	/** Helpers de lookup. */
 	getBoardById: (id: string) => Board | null;
 	getColumnById: (id: string) => Column | null;
 	getCardById: (id: string) => Card | null;
 	getUserById: (id: string) => User | null;
 	getFilteredCards: () => Card[];
+
+	/** Snapshot synchrone du state. */
 	get: () => KanbanState;
 }
 
@@ -62,177 +91,87 @@ const initialState: KanbanState = {
 	filters: {}
 };
 
-// Mock data for demonstration
-const mockUsers: User[] = [
-	{
-		id: '1',
-		name: 'Jean Dupont',
-		email: 'jean.dupont@example.com',
-		avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jean'
-	},
-	{
-		id: '2',
-		name: 'Marie Martin',
-		email: 'marie.martin@example.com',
-		avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Marie'
-	},
-	{
-		id: '3',
-		name: 'Pierre Durand',
-		email: 'pierre.durand@example.com',
-		avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Pierre'
-	}
-];
-
-const mockLabels: Label[] = [
-	{ id: '1', name: 'Urgent', color: '#ef4444' },
-	{ id: '2', name: 'Bug', color: '#f59e0b' },
-	{ id: '3', name: 'Feature', color: '#10b981' },
-	{ id: '4', name: 'Documentation', color: '#3b82f6' },
-	{ id: '5', name: 'Review', color: '#8b5cf6' }
-];
-
 function createKanbanStore(): KanbanStore {
 	const { subscribe, update } = writable<KanbanState>(initialState);
+	let initialized = false;
+	let persistTimeout: ReturnType<typeof setTimeout> | undefined;
 
-	// Initialize with mock data
+	function schedulePersist() {
+		if (!browser || !kanbanDB.isSupported()) return;
+		if (persistTimeout) clearTimeout(persistTimeout);
+		persistTimeout = setTimeout(async () => {
+			try {
+				const state = getStoreValue(kanbanStore);
+				await kanbanDB.setState(serializeKanbanState(state));
+			} catch (error) {
+				console.warn('Kanban IndexedDB write failed:', error);
+			}
+		}, 250);
+	}
+
+	async function init() {
+		if (initialized || !browser) return;
+
+		update((state) => ({ ...state, loading: true, error: null }));
+
+		try {
+			if (kanbanDB.isSupported()) {
+				await kanbanDB.init();
+				const persisted = await kanbanDB.getState();
+				if (persisted) {
+					const restored = deserializeKanbanState(persisted);
+					update(() => ({ ...restored, loading: false, error: null }));
+					initialized = true;
+					return;
+				}
+			}
+
+			// Fallback: DB vide / non supportée -> mock uniquement en dev
+			if (dev) {
+				const mockBoards = generateMockBoards();
+				const firstBoard = mockBoards[0] ?? null;
+				update((state) => ({
+					...state,
+					users: mockUsers,
+					labels: mockLabels,
+					boards: mockBoards,
+					currentBoard: firstBoard,
+					columns: firstBoard?.columns ?? [],
+					cards: firstBoard?.cards ?? [],
+					loading: false,
+					error: null
+				}));
+			} else {
+				update((state) => ({ ...state, loading: false }));
+			}
+
+			initialized = true;
+		} catch (error) {
+			console.warn('Kanban IndexedDB init failed:', error);
+			// Fallback (dev)
+			if (dev) {
+				const mockBoards = generateMockBoards();
+				const firstBoard = mockBoards[0] ?? null;
+				update((state) => ({
+					...state,
+					users: mockUsers,
+					labels: mockLabels,
+					boards: mockBoards,
+					currentBoard: firstBoard,
+					columns: firstBoard?.columns ?? [],
+					cards: firstBoard?.cards ?? [],
+					loading: false,
+					error: null
+				}));
+			} else {
+				update((state) => ({ ...state, loading: false, error: 'Erreur IndexedDB' }));
+			}
+			initialized = true;
+		}
+	}
+
 	function initializeBoards() {
-		update((state) => ({
-			...state,
-			users: mockUsers,
-			labels: mockLabels,
-			boards: generateMockBoards(),
-			loading: false
-		}));
-	}
-
-	// Generate mock boards
-	function generateMockBoards(): Board[] {
-		const mockBoard: Board = {
-			id: '1',
-			title: 'Projet Web Application',
-			description: "Développement d'une application web collaborative avec Kanban board",
-			columns: generateMockColumns(),
-			cards: generateMockCards(),
-			members: mockUsers,
-			ownerId: '1',
-			isPublic: false,
-			createdAt: new SvelteDate('2024-01-01'),
-			updatedAt: new SvelteDate('2024-12-01')
-		};
-
-		return [mockBoard];
-	}
-
-	// Generate mock columns
-	function generateMockColumns(): Column[] {
-		return [
-			{
-				id: '1',
-				title: 'À faire',
-				boardId: '1',
-				position: 0,
-				color: '#6b7280',
-				createdAt: new SvelteDate('2024-01-01'),
-				updatedAt: new SvelteDate('2024-01-01')
-			},
-			{
-				id: '2',
-				title: 'En cours',
-				boardId: '1',
-				position: 1,
-				color: '#3b82f6',
-				createdAt: new SvelteDate('2024-01-01'),
-				updatedAt: new SvelteDate('2024-01-01')
-			},
-			{
-				id: '3',
-				title: 'En revue',
-				boardId: '1',
-				position: 2,
-				color: '#f59e0b',
-				createdAt: new SvelteDate('2024-01-01'),
-				updatedAt: new SvelteDate('2024-01-01')
-			},
-			{
-				id: '4',
-				title: 'Terminé',
-				boardId: '1',
-				position: 3,
-				color: '#10b981',
-				createdAt: new SvelteDate('2024-01-01'),
-				updatedAt: new SvelteDate('2024-01-01')
-			}
-		];
-	}
-
-	// Generate mock cards
-	function generateMockCards(): Card[] {
-		return [
-			{
-				id: '1',
-				title: "Créer l'interface d'authentification",
-				description: 'Implémenter le login/logout avec JWT et gestion des sessions',
-				columnId: '1',
-				boardId: '1',
-				position: 0,
-				labels: [mockLabels[0], mockLabels[2]],
-				assignedUsers: [mockUsers[0]],
-				dueDate: new SvelteDate('2024-12-15'),
-				comments: [],
-				attachments: [],
-				createdAt: new SvelteDate('2024-12-01'),
-				updatedAt: new SvelteDate('2024-12-01'),
-				createdBy: '1'
-			},
-			{
-				id: '2',
-				title: 'Développer le drag & drop',
-				description: 'Permettre le déplacement des cartes entre colonnes',
-				columnId: '2',
-				boardId: '1',
-				position: 0,
-				labels: [mockLabels[2]],
-				assignedUsers: [mockUsers[1]],
-				dueDate: new SvelteDate('2024-12-10'),
-				comments: [],
-				attachments: [],
-				createdAt: new SvelteDate('2024-12-02'),
-				updatedAt: new SvelteDate('2024-12-05'),
-				createdBy: '2'
-			},
-			{
-				id: '3',
-				title: 'Corriger le bug de pagination',
-				description: 'La pagination ne fonctionne pas correctement sur mobile',
-				columnId: '1',
-				boardId: '1',
-				position: 1,
-				labels: [mockLabels[0], mockLabels[1]],
-				assignedUsers: [mockUsers[2]],
-				dueDate: new SvelteDate('2024-12-08'),
-				comments: [],
-				attachments: [],
-				createdAt: new SvelteDate('2024-12-03'),
-				updatedAt: new SvelteDate('2024-12-03'),
-				createdBy: '3'
-			},
-			{
-				id: '4',
-				title: 'Optimiser les performances',
-				description: 'Réduire le temps de chargement des tableaux',
-				columnId: '3',
-				boardId: '1',
-				position: 0,
-				labels: [mockLabels[4]],
-				assignedUsers: [mockUsers[0], mockUsers[1]],
-				comments: [],
-				attachments: [],
-				createdAt: new SvelteDate('2024-12-04'),
-				updatedAt: new SvelteDate('2024-12-06'),
-				createdBy: '1'
-			}
-		];
+		void init();
 	}
 
 	// Create board
@@ -260,6 +199,7 @@ function createKanbanStore(): KanbanStore {
 				boards: [...state.boards, newBoard],
 				loading: false
 			}));
+			schedulePersist();
 
 			return true;
 		} catch (error) {
@@ -286,6 +226,7 @@ function createKanbanStore(): KanbanStore {
 				),
 				loading: false
 			}));
+			schedulePersist();
 
 			return true;
 		} catch (error) {
@@ -311,6 +252,7 @@ function createKanbanStore(): KanbanStore {
 				currentBoard: state.currentBoard?.id === id ? null : state.currentBoard,
 				loading: false
 			}));
+			schedulePersist();
 
 			return true;
 		} catch (error) {
@@ -368,6 +310,7 @@ function createKanbanStore(): KanbanStore {
 				),
 				loading: false
 			}));
+			schedulePersist();
 
 			return true;
 		} catch (error) {
@@ -394,6 +337,7 @@ function createKanbanStore(): KanbanStore {
 				),
 				loading: false
 			}));
+			schedulePersist();
 
 			return true;
 		} catch (error) {
@@ -419,6 +363,7 @@ function createKanbanStore(): KanbanStore {
 				cards: state.cards.filter((card) => card.columnId !== id),
 				loading: false
 			}));
+			schedulePersist();
 
 			return true;
 		} catch (error) {
@@ -468,6 +413,7 @@ function createKanbanStore(): KanbanStore {
 					loading: false
 				};
 			});
+			schedulePersist();
 
 			return true;
 		} catch (error) {
@@ -508,6 +454,7 @@ function createKanbanStore(): KanbanStore {
 				),
 				loading: false
 			}));
+			schedulePersist();
 
 			return true;
 		} catch (error) {
@@ -532,6 +479,7 @@ function createKanbanStore(): KanbanStore {
 				cards: state.cards.filter((card) => card.id !== id),
 				loading: false
 			}));
+			schedulePersist();
 
 			return true;
 		} catch (error) {
@@ -582,6 +530,7 @@ function createKanbanStore(): KanbanStore {
 					loading: false
 				};
 			});
+			schedulePersist();
 
 			return true;
 		} catch (error) {
@@ -617,6 +566,7 @@ function createKanbanStore(): KanbanStore {
 				),
 				loading: false
 			}));
+			schedulePersist();
 
 			return true;
 		} catch (error) {
@@ -684,6 +634,7 @@ function createKanbanStore(): KanbanStore {
 				),
 				loading: false
 			}));
+			schedulePersist();
 
 			return true;
 		} catch (error) {
@@ -777,6 +728,7 @@ function createKanbanStore(): KanbanStore {
 
 	return {
 		subscribe,
+		init,
 		initializeBoards,
 		createBoard,
 		updateBoard,

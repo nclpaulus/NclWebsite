@@ -6,6 +6,13 @@
 	import { fade } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 
+	/**
+	 * ProfileSelector.
+	 *
+	 * Écran de sélection du profil (pro/gamer/lambda) avec transition et redirection.
+	 * La persistance est assurée par le store `profile`.
+	 */
+
 	const profiles = [
 		{
 			id: 'pro' as Profile,
@@ -111,7 +118,7 @@
 			const targetRoute = getProfileRoute(profileId);
 			await goto(targetRoute);
 		} catch (error) {
-			console.error('Failed to switch profile:', error);
+			console.warn('Failed to switch profile:', error);
 			isTransitioning = false;
 		} finally {
 			isLoading = false;

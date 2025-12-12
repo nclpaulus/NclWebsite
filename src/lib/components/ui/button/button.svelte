@@ -2,13 +2,20 @@
 	import { type Snippet } from 'svelte';
 	import { cn } from '$lib/utils';
 	import { Button } from 'bits-ui';
-	import { buttonVariants } from './index.js';
+	import { buttonVariants } from './index.ts';
+	import type { ButtonVariants } from './index.ts';
 
+	/**
+	 * Button UI (wrapper Bits UI).
+	 *
+	 * - Le styling est dérivé de `buttonVariants`.
+	 * - Supporte les variants (`variant`) et tailles (`size`).
+	 */
 	type $$Props = Button.RootProps & {
 		class?: string;
 		children: Snippet;
-		variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
-		size?: 'default' | 'sm' | 'lg' | 'icon';
+		variant?: ButtonVariants['variant'];
+		size?: ButtonVariants['size'];
 		asChild?: boolean;
 	};
 

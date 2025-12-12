@@ -3,6 +3,8 @@
 	import type { Profile } from '$lib/services/profileDB';
 	import { profileDB } from '$lib/services/profileDB';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import { goto } from '$app/navigation';
+	import { dev } from '$app/environment';
 
 	let isOpen = $state(false);
 
@@ -12,21 +14,25 @@
 		{ id: 'lambda' as Profile, ...profileInfo.lambda }
 	];
 
+	/**
+	 * ProfileSwitcher.
+	 *
+	 * Dropdown permettant de changer de profil. La persistance est gérée par `profile`/IndexedDB.
+	 */
 	async function switchProfile(newProfile: Profile) {
 		await profile.switch(newProfile);
 		isOpen = false;
 		// Redirection vers la page d'accueil après changement de profil
-		window.location.href = '/';
+		await goto('/');
 	}
 
 	async function clearIndexedDB() {
 		try {
 			await profileDB.clearSettings();
-			console.log('IndexedDB nettoyée avec succès');
 			// Optionnel: recharger la page pour réinitialiser l'état
 			window.location.reload();
 		} catch (error) {
-			console.error('Erreur lors du nettoyage de IndexedDB:', error);
+			console.warn('Erreur lors du nettoyage de IndexedDB:', error);
 		}
 	}
 
@@ -139,15 +145,17 @@
 
 				<div class="border-t border-border mt-2 pt-2">
 					<!-- Bouton de nettoyage IndexedDB (développement) -->
-					<button
-						class="w-full flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-destructive/10 transition-colors text-left text-sm text-destructive"
-						onclick={clearIndexedDB}
-						role="menuitem"
-						tabindex="-1"
-					>
-						<span>🗑️</span>
-						<span>Nettoyer IndexedDB</span>
-					</button>
+					{#if dev}
+						<button
+							class="w-full flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-destructive/10 transition-colors text-left text-sm text-destructive"
+							onclick={clearIndexedDB}
+							role="menuitem"
+							tabindex="-1"
+						>
+							<span>🗑️</span>
+							<span>Nettoyer IndexedDB</span>
+						</button>
+					{/if}
 
 					<button
 						class="w-full flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-muted transition-colors text-left text-sm text-muted-foreground"

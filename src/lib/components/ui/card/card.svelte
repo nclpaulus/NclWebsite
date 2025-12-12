@@ -2,6 +2,13 @@
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { cn, type WithElementRef } from '$lib/utils.js';
 
+	/**
+	 * Card (conteneur principal).
+	 *
+	 * - Rend un `<div>`.
+	 * - Utiliser les sous-composants `CardHeader`, `CardContent`, `CardFooter`, etc.
+	 */
+
 	let {
 		ref = $bindable(null),
 		class: className,

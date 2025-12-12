@@ -11,8 +11,7 @@
 
 	onMount(async () => {
 		try {
-			// Initialize the store if not already done
-			kanbanStore.initializeBoards();
+			await kanbanStore.init();
 
 			// Check if board exists
 			if (id) {

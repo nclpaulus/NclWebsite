@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { setContext } from 'svelte';
 	import { kanbanStore } from '$lib/stores/kanban.svelte';
 	import { goto } from '$app/navigation';
 	import type { Board, Column as ColumnType, Card } from '$lib/types/kanban';
@@ -7,6 +8,12 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 
+	/**
+	 * Board (vue principale d'un tableau Kanban).
+	 *
+	 * - Charge l'état via `kanbanStore` (in-memory/mock dans l'implémentation actuelle).
+	 * - Gère les filtres UI (recherche / labels / assignation / échéance).
+	 */
 	interface Props {
 		boardId: string;
 	}
@@ -27,6 +34,21 @@
 	let selectedLabels = $state<string[]>([]);
 	let selectedUsers = $state<string[]>([]);
 	let selectedDueDate = $state<string>('');
+	let boardSettingsDialog = $state<HTMLDialogElement>();
+	let boardSettingsTitleInput = $state<HTMLInputElement>();
+	let boardSettingsOpener = $state<HTMLElement | null>(null);
+	let a11yAnnouncement = $state('');
+	let announceTimeout: ReturnType<typeof setTimeout> | undefined;
+
+	function announce(message: string) {
+		if (announceTimeout) clearTimeout(announceTimeout);
+		a11yAnnouncement = '';
+		announceTimeout = setTimeout(() => {
+			a11yAnnouncement = message;
+		}, 10);
+	}
+
+	setContext('kanban-announce', announce);
 
 	// Reactive derived state
 	const boardCards = $derived(filteredCards.filter((card) => card.boardId === boardId));
@@ -136,6 +158,66 @@
 		}
 	}
 
+	function getFocusableElements(container: HTMLElement) {
+		const selector =
+			'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+		return Array.from(container.querySelectorAll<HTMLElement>(selector)).filter(
+			(el) => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden')
+		);
+	}
+
+	function trapDialogTab(event: KeyboardEvent, dialog: HTMLDialogElement) {
+		if (event.key !== 'Tab') return;
+
+		const focusables = getFocusableElements(dialog);
+		if (focusables.length === 0) return;
+
+		const first = focusables[0];
+		const last = focusables[focusables.length - 1];
+		const active = document.activeElement as HTMLElement | null;
+
+		if (event.shiftKey) {
+			if (!active || active === first) {
+				event.preventDefault();
+				last.focus();
+			}
+		} else {
+			if (active === last) {
+				event.preventDefault();
+				first.focus();
+			}
+		}
+	}
+
+	function openBoardSettings() {
+		boardSettingsOpener = document.activeElement as HTMLElement | null;
+		showBoardSettings = true;
+	}
+
+	function closeBoardSettings() {
+		showBoardSettings = false;
+		if (boardSettingsDialog?.open) {
+			boardSettingsDialog.close();
+		}
+		boardSettingsOpener?.focus();
+		boardSettingsOpener = null;
+	}
+
+	$effect(() => {
+		if (!boardSettingsDialog) return;
+
+		if (showBoardSettings) {
+			if (!boardSettingsDialog.open) {
+				boardSettingsDialog.showModal();
+			}
+			boardSettingsTitleInput?.focus();
+		} else {
+			if (boardSettingsDialog.open) {
+				boardSettingsDialog.close();
+			}
+		}
+	});
+
 	function getBoardStats() {
 		if (!board) return null;
 
@@ -162,6 +244,8 @@
 
 	const stats = $derived(getBoardStats());
 </script>
+
+<div class="sr-only" aria-live="polite" aria-atomic="true">{a11yAnnouncement}</div>
 
 <div class="min-h-screen bg-background">
 	{#if loading}
@@ -322,7 +406,7 @@
 						</div>
 
 						<!-- Actions -->
-						<Button variant="outline" onclick={() => (showBoardSettings = true)}>
+						<Button variant="outline" onclick={openBoardSettings}>
 							<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path
 									stroke-linecap="round"
@@ -481,103 +565,93 @@
 </div>
 
 <!-- Board Settings Modal -->
-{#if showBoardSettings && board}
-	<div
-		class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-		onclick={() => (showBoardSettings = false)}
-		onkeydown={(e) => {
-			if (e.key === 'Escape') showBoardSettings = false;
-		}}
-		role="dialog"
-		aria-modal="true"
+{#if board}
+	<dialog
+		bind:this={boardSettingsDialog}
+		class="bg-background border border-border rounded-lg max-w-md w-full p-0"
 		aria-labelledby="board-settings-title"
-		tabindex="-1"
+		oncancel={(e) => {
+			e.preventDefault();
+			closeBoardSettings();
+		}}
+		onclick={(e) => {
+			if (e.target === boardSettingsDialog) closeBoardSettings();
+		}}
+		onkeydown={(e) => {
+			if (boardSettingsDialog) trapDialogTab(e, boardSettingsDialog);
+		}}
 	>
-		<dialog
-			class="bg-background border border-border rounded-lg max-w-md w-full p-0"
-			onkeydown={(e) => {
-				if (e.key === 'Escape') showBoardSettings = false;
-			}}
-			open={showBoardSettings}
-		>
-			<div class="p-6">
-				<div class="flex items-center justify-between mb-4">
-					<h2 id="board-settings-title" class="text-xl font-semibold">Paramètres du tableau</h2>
-					<button
-						onclick={() => (showBoardSettings = false)}
-						onkeydown={(e) => {
-							if (e.key === 'Enter' || e.key === ' ') showBoardSettings = false;
-						}}
-						class="text-muted-foreground hover:text-foreground transition-colors"
-						aria-label="Fermer les paramètres du tableau"
-					>
-						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M6 18L18 6M6 6l12 12"
-							/>
-						</svg>
-					</button>
+		<div class="p-6">
+			<div class="flex items-center justify-between mb-4">
+				<h2 id="board-settings-title" class="text-xl font-semibold">Paramètres du tableau</h2>
+				<button
+					onclick={closeBoardSettings}
+					class="text-muted-foreground hover:text-foreground transition-colors"
+					aria-label="Fermer les paramètres du tableau"
+					type="button"
+				>
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M6 18L18 6M6 6l12 12"
+						/>
+					</svg>
+				</button>
+			</div>
+
+			<form
+				onsubmit={(e) => {
+					e.preventDefault();
+					handleUpdateBoard(new FormData(e.target as HTMLFormElement));
+				}}
+				class="space-y-4"
+			>
+				<div>
+					<label for="title" class="block text-sm font-medium mb-1">Titre</label>
+					<input
+						id="title"
+						name="title"
+						type="text"
+						required
+						bind:this={boardSettingsTitleInput}
+						bind:value={board.title}
+						class="w-full px-3 py-2 border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+					/>
 				</div>
 
-				<form
-					onsubmit={(e) => {
-						e.preventDefault();
-						handleUpdateBoard(new FormData(e.target as HTMLFormElement));
-					}}
-					class="space-y-4"
-				>
-					<div>
-						<label for="title" class="block text-sm font-medium mb-1">Titre</label>
+				<div>
+					<label for="description" class="block text-sm font-medium mb-1">Description</label>
+					<textarea
+						id="description"
+						name="description"
+						rows="3"
+						bind:value={board.description}
+						placeholder="Description du projet..."
+						class="w-full px-3 py-2 border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+					></textarea>
+				</div>
+
+				<div>
+					<label class="flex items-center gap-2 cursor-pointer">
 						<input
-							id="title"
-							name="title"
-							type="text"
-							required
-							bind:value={board.title}
-							class="w-full px-3 py-2 border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+							type="checkbox"
+							name="isPublic"
+							checked={board.isPublic}
+							class="rounded border-border"
 						/>
-					</div>
+						<span class="text-sm">Rendre ce tableau public</span>
+					</label>
+				</div>
 
-					<div>
-						<label for="description" class="block text-sm font-medium mb-1">Description</label>
-						<textarea
-							id="description"
-							name="description"
-							rows="3"
-							bind:value={board.description}
-							placeholder="Description du projet..."
-							class="w-full px-3 py-2 border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-						></textarea>
-					</div>
-
-					<div>
-						<label class="flex items-center gap-2 cursor-pointer">
-							<input
-								type="checkbox"
-								name="isPublic"
-								checked={board.isPublic}
-								class="rounded border-border"
-							/>
-							<span class="text-sm">Rendre ce tableau public</span>
-						</label>
-					</div>
-
-					<div class="flex gap-3 pt-4">
-						<Button
-							type="button"
-							variant="outline"
-							onclick={() => (showBoardSettings = false)}
-							class="flex-1"
-						>
-							Annuler
-						</Button>
-						<Button type="submit" class="flex-1">Enregistrer</Button>
-					</div>
-				</form>
-			</div>
-		</dialog>
-	</div>
+				<div class="flex gap-3 pt-4">
+					<Button type="button" variant="outline" onclick={closeBoardSettings} class="flex-1">
+						Annuler
+					</Button>
+					<Button type="submit" class="flex-1">Enregistrer</Button>
+				</div>
+			</form>
+		</div>
+	</dialog>
 {/if}

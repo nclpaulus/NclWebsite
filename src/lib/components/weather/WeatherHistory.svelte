@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Card from '$lib/components/ui/card/card.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import { weatherStore } from '$lib/stores/weather.svelte';
 	import type { WeatherHistory } from '$lib/stores/weather.svelte';
 
 	export let history: WeatherHistory[];
@@ -32,10 +33,7 @@
 	}
 
 	function clearHistory() {
-		if (typeof window !== 'undefined') {
-			localStorage.removeItem('weather-history');
-			history = [];
-		}
+		weatherStore.clearHistory();
 	}
 
 	function exportHistory() {

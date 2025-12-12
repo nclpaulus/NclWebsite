@@ -3,15 +3,21 @@
 	import Card from '$lib/components/ui/card/card.svelte';
 	import type { Map, LeafletMouseEvent } from 'leaflet';
 
-	export let latitude: number;
-	export let longitude: number;
+	interface Props {
+		latitude: number;
+		longitude: number;
+	}
+
+	let { latitude, longitude }: Props = $props();
 
 	let mapContainer: HTMLDivElement;
 	let map: Map | null = null;
 	let L: typeof import('leaflet');
+	let mapError = $state<string | null>(null);
 
 	onMount(async () => {
 		try {
+			mapError = null;
 			// Dynamically import Leaflet to avoid SSR issues
 			const leafletModule = await import('leaflet');
 			L = leafletModule.default;
@@ -36,50 +42,47 @@
 				attribution: '© OpenStreetMap contributors'
 			}).addTo(map);
 
-			// Add weather layers
-			const weatherLayers = {
-				Précipitations: L.tileLayer(
-					`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}`,
-					{
-						attribution: '© OpenWeatherMap'
-					}
-				),
-				Température: L.tileLayer(
-					`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}`,
-					{
-						attribution: '© OpenWeatherMap'
-					}
-				),
-				Nuages: L.tileLayer(
-					`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}`,
-					{
-						attribution: '© OpenWeatherMap'
-					}
-				),
-				Pression: L.tileLayer(
-					`https://tile.openweathermap.org/map/pressure_new/{z}/{x}/{y}.png?appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}`,
-					{
-						attribution: '© OpenWeatherMap'
-					}
-				),
-				Vent: L.tileLayer(
-					`https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}`,
-					{
-						attribution: '© OpenWeatherMap'
-					}
-				)
-			};
+			const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY as string | undefined;
+			if (apiKey) {
+				// Add weather layers
+				const weatherLayers = {
+					Précipitations: L.tileLayer(
+						`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${apiKey}`,
+						{
+							attribution: '© OpenWeatherMap'
+						}
+					),
+					Température: L.tileLayer(
+						`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${apiKey}`,
+						{
+							attribution: '© OpenWeatherMap'
+						}
+					),
+					Nuages: L.tileLayer(
+						`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${apiKey}`,
+						{
+							attribution: '© OpenWeatherMap'
+						}
+					),
+					Pression: L.tileLayer(
+						`https://tile.openweathermap.org/map/pressure_new/{z}/{x}/{y}.png?appid=${apiKey}`,
+						{
+							attribution: '© OpenWeatherMap'
+						}
+					),
+					Vent: L.tileLayer(
+						`https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=${apiKey}`,
+						{
+							attribution: '© OpenWeatherMap'
+						}
+					)
+				};
 
-			// Add layer control
-			L.control
-				.layers(
-					weatherLayers,
-					{},
-					{
-						position: 'topright'
-					}
-				)
-				.addTo(map);
+				// Add layer control
+				L.control.layers(weatherLayers, {}, { position: 'topright' }).addTo(map);
+			} else {
+				mapError = 'Clé OpenWeatherMap manquante: les layers météo ne sont pas disponibles.';
+			}
 
 			// Add current location marker
 			const marker = L.marker([latitude, longitude]).addTo(map);
@@ -94,8 +97,8 @@
 				const { lat, lng } = e.latlng;
 				await getWeatherForLocation(lat, lng);
 			});
-		} catch (error) {
-			console.error('Error initializing map:', error);
+		} catch {
+			mapError = 'Impossible de charger la carte (Leaflet)';
 		}
 	});
 
@@ -156,6 +159,15 @@
 				bind:this={mapContainer}
 				class="w-full h-96 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700"
 			></div>
+			{#if mapError}
+				<div
+					class="absolute top-4 left-4 bg-yellow-50 text-yellow-900 border border-yellow-200 rounded-lg p-3 shadow"
+					role="status"
+					aria-live="polite"
+				>
+					{mapError}
+				</div>
+			{/if}
 
 			<div
 				class="absolute bottom-4 left-4 bg-white dark:bg-gray-800 rounded-lg p-3 shadow-lg border border-gray-200 dark:border-gray-700"

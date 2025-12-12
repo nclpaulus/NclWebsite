@@ -6,6 +6,14 @@ import Header from './card-header.svelte';
 import Title from './card-title.svelte';
 import Action from './card-action.svelte';
 
+/**
+ * Composants UI `Card`.
+ *
+ * Pattern:
+ * - `Card` (alias de `Root`) comme conteneur
+ * - sous-composants: `CardHeader`, `CardContent`, `CardFooter`, etc.
+ */
+
 export {
 	Root,
 	Content,

@@ -5,6 +5,11 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 
+	/**
+	 * BoardCard.
+	 *
+	 * Carte cliquable représentant un tableau dans la liste (accès + actions rapides).
+	 */
 	interface Props {
 		board: Board;
 	}

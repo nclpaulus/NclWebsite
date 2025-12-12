@@ -1,6 +1,14 @@
 <script lang="ts" module>
 	import { type VariantProps, tv } from 'tailwind-variants';
 
+	/**
+	 * Définition des classes Tailwind (via `tailwind-variants`) pour le composant `Badge`.
+	 *
+	 * Usage:
+	 * - `badgeVariants({ variant: 'secondary' })`
+	 * - Le composant `Badge` l’utilise automatiquement via sa prop `variant`.
+	 */
+
 	export const badgeVariants = tv({
 		base: 'focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden whitespace-nowrap rounded-full border px-2 py-0.5 text-xs font-medium transition-[color,box-shadow] focus-visible:ring-[3px] [&>svg]:pointer-events-none [&>svg]:size-3',
 		variants: {
@@ -18,12 +26,25 @@
 		}
 	});
 
+	/**
+	 * Variantes supportées par `Badge`.
+	 *
+	 * Remarque: le set exact dépend de `badgeVariants`.
+	 */
 	export type BadgeVariant = VariantProps<typeof badgeVariants>['variant'];
 </script>
 
 <script lang="ts">
 	import type { HTMLAnchorAttributes } from 'svelte/elements';
 	import { cn, type WithElementRef } from '$lib/utils.js';
+
+	/**
+	 * Badge UI.
+	 *
+	 * - Rend un `<a>` si `href` est fourni, sinon un `<span>`.
+	 * - Les styles sont gérés via `badgeVariants`.
+	 * - `class` permet de compléter/override les classes.
+	 */
 
 	let {
 		ref = $bindable(null),

@@ -1,9 +1,16 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import { kanbanStore } from '$lib/stores/kanban.svelte';
 	import type { Column, Card as CardType } from '$lib/types/kanban';
 	import CardComponent from './Card.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 
+	/**
+	 * Column (colonne Kanban).
+	 *
+	 * - Affiche les cartes de la colonne.
+	 * - Supporte le drag & drop HTML5 pour déplacer une carte entre colonnes.
+	 */
 	interface Props {
 		column: Column;
 		cards: CardType[];
@@ -16,6 +23,7 @@
 	let showCreateCardForm = $state(false);
 	let newCardTitle = $state('');
 	let textareaElement = $state<HTMLTextAreaElement>();
+	const announce = getContext<(message: string) => void>('kanban-announce');
 
 	const columnCards = $derived(
 		cards.filter((card) => card.columnId === column.id).sort((a, b) => a.position - b.position)
@@ -56,6 +64,8 @@
 
 			if (!success) {
 				console.error('Failed to move card');
+			} else {
+				announce?.(`Carte déplacée vers la colonne ${column.title}`);
 			}
 		}
 	}

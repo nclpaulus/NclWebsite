@@ -2,6 +2,7 @@
 	import { weatherStore, type WeatherData } from '$lib/stores/weather.svelte';
 	import { onMount, onDestroy } from 'svelte';
 	import { slide, scale } from 'svelte/transition';
+	import { goto } from '$app/navigation';
 
 	interface Props {
 		position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
@@ -100,7 +101,7 @@
 
 	// Go to full weather page
 	function goToWeatherPage() {
-		window.location.href = '/weather';
+		goto('/weather');
 	}
 </script>
 
@@ -188,6 +189,8 @@
 					onclick={() => (isExpanded = false)}
 					class="text-muted-foreground hover:text-foreground transition-colors"
 					title="Fermer"
+					aria-label="Fermer le widget météo"
+					type="button"
 				>
 					✕
 				</button>

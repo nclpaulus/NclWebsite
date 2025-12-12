@@ -7,6 +7,11 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 
+	/**
+	 * BoardSimple.
+	 *
+	 * Variante simplifiée de la vue Board (pas de filtres / pas de paramètres).
+	 */
 	interface Props {
 		boardId: string;
 	}

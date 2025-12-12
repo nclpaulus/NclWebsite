@@ -2,6 +2,13 @@
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { cn, type WithElementRef } from '$lib/utils.js';
 
+	/**
+	 * CardDescription.
+	 *
+	 * - Texte descriptif du Card.
+	 * - Rend un `<p>`.
+	 */
+
 	let {
 		ref = $bindable(null),
 		class: className,
