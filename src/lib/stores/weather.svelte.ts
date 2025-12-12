@@ -1,0 +1,415 @@
+/**
+ * Store météo avec cache localStorage, géolocalisation et historique.
+ *
+ * Utilise l’API OpenWeatherMap. Fallback sur Liège si la géolocalisation échoue.
+ */
+import { writable, get as getStoreValue } from 'svelte/store';
+import { browser } from '$app/environment';
+
+/** Données météo actuelles (température, humidité, vent, description...). */
+export interface WeatherData {
+	temp: number;
+	feels_like: number;
+	humidity: number;
+	pressure: number;
+	wind_speed: number;
+	wind_deg: number;
+	description: string;
+	icon: string;
+	main: string;
+	city: string;
+	country: string;
+	timestamp: number;
+}
+
+/** Prévision journalière (min/max, description, icône, humidité, vent). */
+export interface ForecastData {
+	date: string;
+	temp_min: number;
+	temp_max: number;
+	description: string;
+	icon: string;
+	humidity: number;
+	wind_speed: number;
+}
+
+/** Coordonnées et informations de localisation. */
+export interface Location {
+	lat: number;
+	lon: number;
+	city?: string;
+	country?: string;
+}
+
+/** Élément brut de prévision OpenWeather (5 jours / 3h). */
+export interface OpenWeatherForecastItem {
+	dt: number;
+	main: {
+		temp: number;
+		humidity: number;
+	};
+	wind: {
+		speed: number;
+	};
+	weather: Array<{
+		description: string;
+		icon: string;
+	}>;
+}
+
+/** Entrée d’historique météo (date + données). */
+export interface WeatherHistory {
+	date: string;
+	data: WeatherData;
+}
+
+/** État interne du store météo. */
+interface WeatherState {
+	currentWeather: WeatherData | null;
+	forecast: ForecastData[];
+	location: Location | null;
+	history: WeatherHistory[];
+	useCurrentLocation: boolean;
+	loading: boolean;
+	error: string | null;
+	lastFetchTime: number;
+}
+
+const initialState: WeatherState = {
+	currentWeather: null,
+	forecast: [],
+	location: null,
+	history: [],
+	useCurrentLocation: true,
+	loading: false,
+	error: null,
+	lastFetchTime: 0
+};
+
+/** Crée le store météo avec cache, historique et géolocalisation. */
+function createWeatherStore() {
+	const { subscribe, update } = writable<WeatherState>(initialState);
+	let initialized = false;
+
+	/** Charge le cache et l’historique depuis localStorage. */
+	function loadFromStorage() {
+		if (!browser) return;
+		try {
+			const cached = localStorage.getItem('weather-cache');
+			if (cached) {
+				const parsed = JSON.parse(cached) as {
+					currentWeather: WeatherData;
+					forecast: ForecastData[];
+					location: Location;
+					lastFetchTime: number;
+				};
+				update((state) => ({
+					...state,
+					currentWeather: parsed.currentWeather,
+					forecast: parsed.forecast,
+					location: parsed.location,
+					lastFetchTime: parsed.lastFetchTime
+				}));
+			}
+
+			const historyRaw = localStorage.getItem('weather-history');
+			if (historyRaw) {
+				const history = JSON.parse(historyRaw) as WeatherHistory[];
+				update((state) => ({ ...state, history }));
+			}
+		} catch {
+			// Ignore cache parse errors
+		}
+	}
+
+	/** Vide l’historique météo. */
+	function clearHistory() {
+		update((state) => ({ ...state, history: [] }));
+		if (browser) {
+			localStorage.removeItem('weather-history');
+		}
+	}
+
+	/** Récupère la position actuelle (géolocalisation) avec timeout et fallback Liège. */
+	async function getCurrentLocation(): Promise<Location> {
+		return new Promise((resolve) => {
+			if (!navigator.geolocation) {
+				resolve({ lat: 50.6325, lon: 5.5797, city: 'Liège', country: 'BE' });
+				return;
+			}
+
+			const timeoutId = setTimeout(() => {
+				resolve({ lat: 50.6325, lon: 5.5797, city: 'Liège', country: 'BE' });
+			}, 5000); // 5 second timeout
+
+			navigator.geolocation.getCurrentPosition(
+				async (position) => {
+					clearTimeout(timeoutId);
+					const { latitude, longitude } = position.coords;
+					try {
+						const location = await reverseGeocode(latitude, longitude);
+						resolve(location);
+					} catch {
+						// Use Liège as fallback if reverse geocode fails
+						resolve({ lat: 50.6325, lon: 5.5797, city: 'Liège', country: 'BE' });
+					}
+				},
+				(error) => {
+					clearTimeout(timeoutId);
+					switch (error.code) {
+						case error.PERMISSION_DENIED:
+							console.warn('Permission de géolocalisation refusée, utilisation de Liège');
+							break;
+						case error.POSITION_UNAVAILABLE:
+							console.warn('Position indisponible, utilisation de Liège');
+							break;
+						case error.TIMEOUT:
+							console.warn("Délai d'attente dépassé, utilisation de Liège");
+							break;
+					}
+					// Always resolve with Liège instead of rejecting
+					resolve({ lat: 50.6325, lon: 5.5797, city: 'Liège', country: 'BE' });
+				}
+			);
+		});
+	}
+
+	/** Ajoute une entrée à l’historique (max 30). */
+	function saveToHistory(weather: WeatherData) {
+		update((state) => {
+			const newHistory = [
+				{ date: new Date().toISOString(), data: weather },
+				...state.history.slice(0, 29) // Keep last 30 entries
+			];
+
+			if (browser) {
+				localStorage.setItem('weather-history', JSON.stringify(newHistory));
+			}
+
+			return { ...state, history: newHistory };
+		});
+	}
+
+	/** Sauvegarde le cache météo (current + forecast + location + timestamp). */
+	function saveWeatherCache(
+		currentWeather: WeatherData,
+		forecast: ForecastData[],
+		location: Location
+	) {
+		if (browser) {
+			const cache = {
+				currentWeather,
+				forecast,
+				location,
+				lastFetchTime: Date.now()
+			};
+			localStorage.setItem('weather-cache', JSON.stringify(cache));
+		}
+	}
+
+	/** Effectue un géocodage inverse (lat/lon → ville/pays). */
+	async function reverseGeocode(lat: number, lon: number): Promise<Location> {
+		const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
+		if (!apiKey) {
+			throw new Error('Clé API OpenWeatherMap non configurée');
+		}
+		const response = await fetch(
+			`https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${apiKey}`
+		);
+
+		if (!response.ok) {
+			throw new Error('Erreur de géocodage');
+		}
+
+		const data = await response.json();
+		if (data.length === 0) {
+			throw new Error('Position non trouvée');
+		}
+
+		return {
+			lat,
+			lon,
+			city: data[0].name,
+			country: data[0].country
+		};
+	}
+
+	/** Récupère les données météo actuelles depuis OpenWeatherMap. */
+	async function fetchCurrentWeather(location: Location): Promise<WeatherData> {
+		const url = `https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}&units=metric&lang=fr`;
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error('Erreur lors de la récupération des données météo');
+		}
+
+		const data = await response.json();
+		const weatherData = {
+			temp: Math.round(data.main.temp),
+			feels_like: Math.round(data.main.feels_like),
+			humidity: data.main.humidity,
+			pressure: data.main.pressure,
+			wind_speed: data.wind.speed,
+			wind_deg: data.wind.deg,
+			description: data.weather[0].description,
+			icon: data.weather[0].icon,
+			main: data.weather[0].main,
+			city: data.name,
+			country: data.sys.country,
+			timestamp: Date.now()
+		};
+		return weatherData;
+	}
+
+	/** Récupère les prévisions 7 jours depuis OpenWeatherMap. */
+	async function fetchForecast(location: Location): Promise<ForecastData[]> {
+		const response = await fetch(
+			`https://api.openweathermap.org/data/2.5/forecast?lat=${location.lat}&lon=${location.lon}&appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}&units=metric&lang=fr`
+		);
+
+		if (!response.ok) {
+			throw new Error('Erreur lors de la récupération des prévisions');
+		}
+
+		const data = await response.json();
+		// Group by day and get daily forecasts
+		const dailyForecasts: { [key: string]: OpenWeatherForecastItem[] } = {};
+		data.list.forEach((item: OpenWeatherForecastItem) => {
+			const date = new Date(item.dt * 1000).toLocaleDateString();
+			if (!dailyForecasts[date]) {
+				dailyForecasts[date] = [];
+			}
+			dailyForecasts[date].push(item);
+		});
+
+		return Object.entries(dailyForecasts)
+			.slice(0, 7)
+			.map(([date, items]) => {
+				const temps = items.map((item) => item.main.temp);
+				const mainItem = items[Math.floor(items.length / 2)]; // Use midday as reference
+
+				return {
+					date,
+					temp_min: Math.round(Math.min(...temps)),
+					temp_max: Math.round(Math.max(...temps)),
+					description: mainItem.weather[0].description,
+					icon: mainItem.weather[0].icon,
+					humidity: mainItem.main.humidity,
+					wind_speed: mainItem.wind.speed
+				};
+			});
+	}
+
+	/** Initialise le store (charge cache, puis rafraîchit si nécessaire). */
+	async function initializeWeather() {
+		if (!initialized) {
+			loadFromStorage();
+			initialized = true;
+		}
+		const currentState = getStoreValue(weatherStore);
+		const now = Date.now();
+		const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes cache
+
+		// Check if we have recent cached data
+		if (
+			currentState.lastFetchTime &&
+			now - currentState.lastFetchTime < CACHE_DURATION &&
+			currentState.currentWeather &&
+			currentState.forecast.length > 0
+		) {
+			return;
+		}
+		update((state) => ({ ...state, loading: true, error: null }));
+
+		try {
+			let location: Location;
+
+			if (currentState.useCurrentLocation) {
+				location = await getCurrentLocation();
+			} else {
+				location = { lat: 50.6325, lon: 5.5797 };
+			}
+			update((state) => ({ ...state, location }));
+			const currentWeather = await fetchCurrentWeather(location);
+			const forecast = await fetchForecast(location);
+
+			update((state) => ({
+				...state,
+				currentWeather,
+				forecast,
+				location,
+				loading: false,
+				lastFetchTime: now
+			}));
+
+			saveToHistory(currentWeather);
+			saveWeatherCache(currentWeather, forecast, location);
+		} catch (error) {
+			update((state) => ({
+				...state,
+				error: error instanceof Error ? error.message : 'Erreur inconnue',
+				loading: false
+			}));
+		}
+	}
+
+	/** Force le rafraîchissement des données météo. */
+	async function refreshWeatherData() {
+		const currentState = getStoreValue(weatherStore);
+		if (!currentState.location) return;
+		await initializeWeather();
+	}
+
+	/** Bascule entre géolocalisation et position fixe (Liège). */
+	function toggleLocation() {
+		update((state) => ({
+			...state,
+			useCurrentLocation: !state.useCurrentLocation
+		}));
+		initializeWeather();
+	}
+
+	/** Définit une ville personnalisée et recharge les données. */
+	async function setCustomLocation(city: string) {
+		try {
+			const response = await fetch(
+				`https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}`
+			);
+
+			if (!response.ok) {
+				throw new Error('Ville non trouvée');
+			}
+
+			const data = await response.json();
+			if (data.length === 0) {
+				throw new Error('Ville non trouvée');
+			}
+
+			const location = {
+				lat: data[0].lat,
+				lon: data[0].lon,
+				city: data[0].name,
+				country: data[0].country
+			};
+
+			update((state) => ({ ...state, location, useCurrentLocation: false }));
+			await refreshWeatherData();
+		} catch (error) {
+			update((state) => ({
+				...state,
+				error: error instanceof Error ? error.message : 'Erreur lors de la recherche de la ville'
+			}));
+		}
+	}
+
+	return {
+		subscribe,
+		initializeWeather,
+		refreshWeatherData,
+		toggleLocation,
+		setCustomLocation,
+		clearHistory,
+		get: () => getStoreValue(weatherStore)
+	};
+}
+
+export const weatherStore = createWeatherStore();

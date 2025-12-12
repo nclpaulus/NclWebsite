@@ -24,7 +24,16 @@ export default defineConfig(
 		rules: {
 			// typescript-eslint strongly recommend that you do not use the no-undef lint rule on TypeScript projects.
 			// see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
-			'no-undef': 'off'
+			'no-undef': 'off',
+			// Disable svelte/no-navigation-without-resolve as it's problematic with $app/state and adds unnecessary verbosity
+			'svelte/no-navigation-without-resolve': 'off'
+		}
+	},
+	{
+		files: ['**/node_modules/**'],
+		rules: {
+			// Ignore deprecation warnings from external dependencies
+			'no-console': 'off'
 		}
 	},
 	{
@@ -36,6 +45,18 @@ export default defineConfig(
 				parser: ts.parser,
 				svelteConfig
 			}
+		}
+	},
+	{
+		files: ['src/lib/components/MermaidDiagram.svelte'],
+		rules: {
+			'svelte/no-dom-manipulating': 'off'
+		}
+	},
+	{
+		files: ['src/routes/architecture/+page.svelte'],
+		rules: {
+			'svelte/no-at-html-tags': 'off'
 		}
 	}
 );

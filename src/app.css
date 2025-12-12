@@ -1,0 +1,124 @@
+@import 'tailwindcss';
+
+/* Thèmes et couleurs personnalisés pour l'application */
+@custom-variant dark (&:is(.dark *));
+
+:root {
+	/* Thème par défaut (lambda) */
+	--background: hsl(142, 20%, 98%);
+	--foreground: hsl(142, 20%, 15%);
+	--primary: hsl(142, 76%, 36%);
+	--primary-foreground: hsl(142, 76%, 98%);
+	--secondary: hsl(142, 76%, 95%);
+	--secondary-foreground: hsl(142, 20%, 15%);
+	--muted: hsl(142, 30%, 94%);
+	--muted-foreground: hsl(142, 15%, 45%);
+	--accent: hsl(200, 76%, 75%);
+	--accent-foreground: hsl(200, 76%, 15%);
+	--destructive: hsl(0, 84.2%, 60.2%);
+	--destructive-foreground: hsl(210 40% 98%);
+	--border: hsl(142, 40%, 88%);
+	--input: hsl(142, 40%, 88%);
+	--ring: hsl(142, 76%, 36%);
+	--radius: 0.5rem;
+}
+
+/* Thèmes de profil - seront appliqués dynamiquement via JavaScript */
+.profile-pro {
+	--background: hsl(220, 20%, 98%);
+	--foreground: hsl(220, 10%, 15%);
+	--primary: hsl(220, 90%, 56%);
+	--primary-foreground: hsl(220, 90%, 98%);
+	--secondary: hsl(220, 14%, 96%);
+	--secondary-foreground: hsl(220, 10%, 15%);
+	--muted: hsl(220, 14%, 96%);
+	--muted-foreground: hsl(220, 10%, 45%);
+	--accent: hsl(220, 84%, 75%);
+	--accent-foreground: hsl(220, 84%, 15%);
+	--border: hsl(220, 30%, 90%);
+	--input: hsl(220, 30%, 90%);
+	--ring: hsl(220, 90%, 56%);
+}
+
+.profile-gamer {
+	--background: hsl(0, 10%, 5%);
+	--foreground: hsl(0, 10%, 95%);
+	--primary: hsl(15, 84%, 60%);
+	--primary-foreground: hsl(15, 84%, 98%);
+	--secondary: hsl(15, 84%, 95%);
+	--secondary-foreground: hsl(0, 10%, 15%);
+	--muted: hsl(0, 10%, 15%);
+	--muted-foreground: hsl(0, 10%, 65%);
+	--accent: hsl(35, 84%, 75%);
+	--accent-foreground: hsl(35, 84%, 15%);
+	--border: hsl(0, 30%, 20%);
+	--input: hsl(0, 30%, 20%);
+	--ring: hsl(15, 84%, 60%);
+}
+
+.profile-lambda {
+	--background: hsl(142, 20%, 98%);
+	--foreground: hsl(142, 20%, 15%);
+	--primary: hsl(142, 76%, 36%);
+	--primary-foreground: hsl(142, 76%, 98%);
+	--secondary: hsl(142, 76%, 95%);
+	--secondary-foreground: hsl(142, 20%, 15%);
+	--muted: hsl(142, 30%, 94%);
+	--muted-foreground: hsl(142, 15%, 45%);
+	--accent: hsl(200, 76%, 75%);
+	--accent-foreground: hsl(200, 76%, 15%);
+	--border: hsl(142, 40%, 88%);
+	--input: hsl(142, 40%, 88%);
+	--ring: hsl(142, 76%, 36%);
+}
+
+@theme inline {
+	/* Mapping des couleurs pour Tailwind v4 */
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-radius: var(--radius);
+}
+
+@layer base {
+	* {
+		@apply border-border;
+	}
+
+	body {
+		@apply bg-background text-foreground;
+		transition:
+			background-color 0.3s ease,
+			color 0.3s ease;
+	}
+}
+
+/* Animations de transition de thème */
+.profile-transition {
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Styles spécifiques aux profils */
+.profile-pro .hero-gradient {
+	background: linear-gradient(135deg, hsl(220, 90%, 56%) 0%, hsl(220, 70%, 85%) 100%);
+}
+
+.profile-gamer .hero-gradient {
+	background: linear-gradient(135deg, hsl(0, 84%, 60%) 0%, hsl(280, 84%, 45%) 100%);
+}
+
+.profile-lambda .hero-gradient {
+	background: linear-gradient(135deg, hsl(142, 76%, 36%) 0%, hsl(200, 76%, 55%) 100%);
+}
