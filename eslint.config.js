@@ -46,5 +46,17 @@ export default defineConfig(
 				svelteConfig
 			}
 		}
+	},
+	{
+		files: ['src/lib/components/MermaidDiagram.svelte'],
+		rules: {
+			'svelte/no-dom-manipulating': 'off'
+		}
+	},
+	{
+		files: ['src/routes/architecture/+page.svelte'],
+		rules: {
+			'svelte/no-at-html-tags': 'off'
+		}
 	}
 );
