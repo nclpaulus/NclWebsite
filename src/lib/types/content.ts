@@ -1,3 +1,4 @@
+/** Expérience de laboratoire (outil, démo, POC). */
 export interface LabExperiment {
 	slug: string;
 	title: string;
@@ -13,6 +14,7 @@ export interface LabExperiment {
 	tags: string[];
 }
 
+/** Projet réalisé (client, portfolio, démo). */
 export interface Project {
 	slug: string;
 	title: string;
@@ -29,6 +31,7 @@ export interface Project {
 	tags: string[];
 }
 
+/** Carte de contenu unifié (lab ou projet). */
 export interface ContentCard {
 	slug: string;
 	title: string;

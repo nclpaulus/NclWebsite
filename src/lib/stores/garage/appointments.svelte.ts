@@ -1,3 +1,8 @@
+/**
+ * Store de gestion des rendez-vous et ressources du garage.
+ *
+ * Ce store utilise des données mock pour démonstration. Il ne persiste pas les données.
+ */
 import { writable, get as getStoreValue } from 'svelte/store';
 import { SvelteDate } from 'svelte/reactivity';
 import type {
@@ -10,6 +15,9 @@ import type {
 	AppointmentSlot
 } from '$lib/types/garage';
 
+/**
+ * État du store rendez-vous.
+ */
 interface AppointmentState {
 	appointments: Appointment[];
 	customers: Customer[];
@@ -114,10 +122,15 @@ const mockMechanics: Mechanic[] = [
 	}
 ];
 
+/**
+ * Crée le store de rendez-vous avec ses méthodes de gestion.
+ *
+ * @returns Store et helpers pour les rendez-vous, clients, véhicules, mécaniciens, créneaux.
+ */
 function createAppointmentStore() {
 	const { subscribe, update } = writable<AppointmentState>(initialState);
 
-	// Initialize with mock data
+	/** Initialise le store avec les données mock. */
 	function initializeAppointments() {
 		update((state) => ({
 			...state,
@@ -129,7 +142,7 @@ function createAppointmentStore() {
 		}));
 	}
 
-	// Generate mock appointments
+	/** Génère des rendez-vous mock pour aujourd’hui et demain. */
 	function generateMockAppointments(): Appointment[] {
 		const today = new SvelteDate();
 		const tomorrow = new SvelteDate(today);
@@ -184,7 +197,7 @@ function createAppointmentStore() {
 		];
 	}
 
-	// Create new appointment
+	/** Crée un nouveau rendez-vous. */
 	async function createAppointment(request: CreateAppointmentRequest): Promise<boolean> {
 		update((state) => ({ ...state, loading: true, error: null }));
 
@@ -215,7 +228,7 @@ function createAppointmentStore() {
 		}
 	}
 
-	// Update appointment
+	/** Met à jour un rendez-vous existant. */
 	async function updateAppointment(id: string, updates: Partial<Appointment>): Promise<boolean> {
 		update((state) => ({ ...state, loading: true, error: null }));
 
@@ -238,7 +251,7 @@ function createAppointmentStore() {
 		}
 	}
 
-	// Delete appointment
+	/** Supprime un rendez-vous. */
 	async function deleteAppointment(id: string): Promise<boolean> {
 		update((state) => ({ ...state, loading: true, error: null }));
 
@@ -259,12 +272,12 @@ function createAppointmentStore() {
 		}
 	}
 
-	// Filter appointments
+	/** Applique les filtres sur les rendez-vous. */
 	function filterAppointments(filters: AppointmentFilters) {
 		update((state) => ({ ...state, filters }));
 	}
 
-	// Get filtered appointments
+	/** Retourne les rendez-vous filtrés et triés par date. */
 	function getFilteredAppointments(): Appointment[] {
 		const state = getStoreValue(appointmentStore);
 		let filtered = [...state.appointments];
@@ -292,7 +305,7 @@ function createAppointmentStore() {
 		return filtered.sort((a, b) => a.date.getTime() - b.date.getTime());
 	}
 
-	// Get appointments for specific date
+	/** Retourne les rendez-vous pour une date donnée. */
 	function getAppointmentsForDate(date: Date): Appointment[] {
 		const state = getStoreValue(appointmentStore);
 		return state.appointments.filter((apt) => {
@@ -301,7 +314,7 @@ function createAppointmentStore() {
 		});
 	}
 
-	// Get available slots for date
+	/** Génère les créneaux disponibles (30 min) pour une date donnée. */
 	function getAvailableSlots(date: Date): AppointmentSlot[] {
 		const appointments = getAppointmentsForDate(date);
 		const slots: AppointmentSlot[] = [];
@@ -335,19 +348,19 @@ function createAppointmentStore() {
 		return slots;
 	}
 
-	// Get customer by ID
+	/** Cherche un client par ID. */
 	function getCustomerById(id: string): Customer | undefined {
 		const state = getStoreValue(appointmentStore);
 		return state.customers.find((c) => c.id === id);
 	}
 
-	// Get vehicle by ID
+	/** Cherche un véhicule par ID. */
 	function getVehicleById(id: string): Vehicle | undefined {
 		const state = getStoreValue(appointmentStore);
 		return state.vehicles.find((v) => v.id === id);
 	}
 
-	// Get mechanic by ID
+	/** Cherche un mécanicien par ID. */
 	function getMechanicById(id: string): Mechanic | undefined {
 		const state = getStoreValue(appointmentStore);
 		return state.mechanics.find((m) => m.id === id);

@@ -1,6 +1,12 @@
+/**
+ * Store météo avec cache localStorage, géolocalisation et historique.
+ *
+ * Utilise l’API OpenWeatherMap. Fallback sur Liège si la géolocalisation échoue.
+ */
 import { writable, get as getStoreValue } from 'svelte/store';
 import { browser } from '$app/environment';
 
+/** Données météo actuelles (température, humidité, vent, description...). */
 export interface WeatherData {
 	temp: number;
 	feels_like: number;
@@ -16,6 +22,7 @@ export interface WeatherData {
 	timestamp: number;
 }
 
+/** Prévision journalière (min/max, description, icône, humidité, vent). */
 export interface ForecastData {
 	date: string;
 	temp_min: number;
@@ -26,6 +33,7 @@ export interface ForecastData {
 	wind_speed: number;
 }
 
+/** Coordonnées et informations de localisation. */
 export interface Location {
 	lat: number;
 	lon: number;
@@ -33,6 +41,7 @@ export interface Location {
 	country?: string;
 }
 
+/** Élément brut de prévision OpenWeather (5 jours / 3h). */
 export interface OpenWeatherForecastItem {
 	dt: number;
 	main: {
@@ -48,11 +57,13 @@ export interface OpenWeatherForecastItem {
 	}>;
 }
 
+/** Entrée d’historique météo (date + données). */
 export interface WeatherHistory {
 	date: string;
 	data: WeatherData;
 }
 
+/** État interne du store météo. */
 interface WeatherState {
 	currentWeather: WeatherData | null;
 	forecast: ForecastData[];
@@ -75,10 +86,12 @@ const initialState: WeatherState = {
 	lastFetchTime: 0
 };
 
+/** Crée le store météo avec cache, historique et géolocalisation. */
 function createWeatherStore() {
 	const { subscribe, update } = writable<WeatherState>(initialState);
 	let initialized = false;
 
+	/** Charge le cache et l’historique depuis localStorage. */
 	function loadFromStorage() {
 		if (!browser) return;
 		try {
@@ -109,6 +122,7 @@ function createWeatherStore() {
 		}
 	}
 
+	/** Vide l’historique météo. */
 	function clearHistory() {
 		update((state) => ({ ...state, history: [] }));
 		if (browser) {
@@ -116,7 +130,7 @@ function createWeatherStore() {
 		}
 	}
 
-	// Get current location
+	/** Récupère la position actuelle (géolocalisation) avec timeout et fallback Liège. */
 	async function getCurrentLocation(): Promise<Location> {
 		return new Promise((resolve) => {
 			if (!navigator.geolocation) {
@@ -160,7 +174,7 @@ function createWeatherStore() {
 		});
 	}
 
-	// Save to history
+	/** Ajoute une entrée à l’historique (max 30). */
 	function saveToHistory(weather: WeatherData) {
 		update((state) => {
 			const newHistory = [
@@ -176,7 +190,7 @@ function createWeatherStore() {
 		});
 	}
 
-	// Save weather data to cache
+	/** Sauvegarde le cache météo (current + forecast + location + timestamp). */
 	function saveWeatherCache(
 		currentWeather: WeatherData,
 		forecast: ForecastData[],
@@ -193,7 +207,7 @@ function createWeatherStore() {
 		}
 	}
 
-	// Reverse geocoding
+	/** Effectue un géocodage inverse (lat/lon → ville/pays). */
 	async function reverseGeocode(lat: number, lon: number): Promise<Location> {
 		const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
 		if (!apiKey) {
@@ -220,7 +234,7 @@ function createWeatherStore() {
 		};
 	}
 
-	// Fetch current weather
+	/** Récupère les données météo actuelles depuis OpenWeatherMap. */
 	async function fetchCurrentWeather(location: Location): Promise<WeatherData> {
 		const url = `https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}&units=metric&lang=fr`;
 		const response = await fetch(url);
@@ -246,7 +260,7 @@ function createWeatherStore() {
 		return weatherData;
 	}
 
-	// Fetch 7-day forecast
+	/** Récupère les prévisions 7 jours depuis OpenWeatherMap. */
 	async function fetchForecast(location: Location): Promise<ForecastData[]> {
 		const response = await fetch(
 			`https://api.openweathermap.org/data/2.5/forecast?lat=${location.lat}&lon=${location.lon}&appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}&units=metric&lang=fr`
@@ -285,7 +299,7 @@ function createWeatherStore() {
 			});
 	}
 
-	// Initialize weather
+	/** Initialise le store (charge cache, puis rafraîchit si nécessaire). */
 	async function initializeWeather() {
 		if (!initialized) {
 			loadFromStorage();
@@ -338,14 +352,14 @@ function createWeatherStore() {
 		}
 	}
 
-	// Refresh weather data
+	/** Force le rafraîchissement des données météo. */
 	async function refreshWeatherData() {
 		const currentState = getStoreValue(weatherStore);
 		if (!currentState.location) return;
 		await initializeWeather();
 	}
 
-	// Toggle location mode
+	/** Bascule entre géolocalisation et position fixe (Liège). */
 	function toggleLocation() {
 		update((state) => ({
 			...state,
@@ -354,7 +368,7 @@ function createWeatherStore() {
 		initializeWeather();
 	}
 
-	// Set custom location
+	/** Définit une ville personnalisée et recharge les données. */
 	async function setCustomLocation(city: string) {
 		try {
 			const response = await fetch(

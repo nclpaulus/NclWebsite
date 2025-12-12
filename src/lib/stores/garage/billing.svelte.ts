@@ -1,6 +1,14 @@
+/**
+ * Store de gestion des factures et de la facturation du garage.
+ *
+ * Ce store utilise des données mock pour démonstration. Il ne persiste pas les données.
+ */
 import { writable, get as getStoreValue } from 'svelte/store';
 import type { Invoice, CreateInvoiceRequest } from '$lib/types/garage';
 
+/**
+ * État du store facturation.
+ */
 interface BillingState {
 	invoices: Invoice[];
 	loading: boolean;
@@ -149,10 +157,15 @@ const mockInvoices: Invoice[] = [
 	}
 ];
 
+/**
+ * Crée le store de facturation avec ses méthodes de gestion.
+ *
+ * @returns Store et helpers pour les factures, création, envoi, paiement, statistiques.
+ */
 function createBillingStore() {
 	const { subscribe, update } = writable<BillingState>(initialState);
 
-	// Initialize with mock data
+	/** Initialise le store avec les données mock. */
 	function initializeBilling() {
 		update((state) => ({
 			...state,
@@ -161,7 +174,7 @@ function createBillingStore() {
 		}));
 	}
 
-	// Generate invoice number
+	/** Génère un numéro de facture unique basé sur l’année et le compteur. */
 	function generateInvoiceNumber(): string {
 		const year = new Date().getFullYear();
 		const state = getStoreValue(billingStore);
@@ -169,7 +182,7 @@ function createBillingStore() {
 		return `INV-${year}-${count.toString().padStart(3, '0')}`;
 	}
 
-	// Create new invoice
+	/** Crée une nouvelle facture à partir d’une requête. */
 	async function createInvoice(request: CreateInvoiceRequest): Promise<string | null> {
 		update((state) => ({ ...state, loading: true, error: null }));
 
@@ -226,7 +239,7 @@ function createBillingStore() {
 		}
 	}
 
-	// Update invoice
+	/** Met à jour une facture existante. */
 	async function updateInvoice(id: string, updates: Partial<Invoice>): Promise<boolean> {
 		update((state) => ({ ...state, loading: true, error: null }));
 
@@ -249,7 +262,7 @@ function createBillingStore() {
 		}
 	}
 
-	// Delete invoice
+	/** Supprime une facture. */
 	async function deleteInvoice(id: string): Promise<boolean> {
 		update((state) => ({ ...state, loading: true, error: null }));
 
@@ -270,7 +283,7 @@ function createBillingStore() {
 		}
 	}
 
-	// Send invoice
+	/** Simule l’envoi d’une facture et passe son statut à ‘sent’. */
 	async function sendInvoice(id: string): Promise<boolean> {
 		update((state) => ({ ...state, loading: true, error: null }));
 
@@ -298,7 +311,7 @@ function createBillingStore() {
 		}
 	}
 
-	// Mark invoice as paid
+	/** Marque une facture comme payée avec une méthode de paiement. */
 	async function markAsPaid(id: string, paymentMethod: Invoice['paymentMethod']): Promise<boolean> {
 		update((state) => ({ ...state, loading: true, error: null }));
 
@@ -329,19 +342,19 @@ function createBillingStore() {
 		}
 	}
 
-	// Get invoice by ID
+	/** Cherche une facture par ID. */
 	function getInvoiceById(id: string): Invoice | undefined {
 		const state = getStoreValue(billingStore);
 		return state.invoices.find((invoice) => invoice.id === id);
 	}
 
-	// Get invoices by status
+	/** Retourne les factures par statut. */
 	function getInvoicesByStatus(status: Invoice['status']): Invoice[] {
 		const state = getStoreValue(billingStore);
 		return state.invoices.filter((invoice) => invoice.status === status);
 	}
 
-	// Get overdue invoices
+	/** Retourne les factures en retard (non payées et échéance dépassée). */
 	function getOverdueInvoices(): Invoice[] {
 		const state = getStoreValue(billingStore);
 		const now = new Date();
@@ -351,13 +364,13 @@ function createBillingStore() {
 		);
 	}
 
-	// Get invoices by customer
+	/** Retourne les factures d’un client. */
 	function getInvoicesByCustomer(customerId: string): Invoice[] {
 		const state = getStoreValue(billingStore);
 		return state.invoices.filter((invoice) => invoice.customerId === customerId);
 	}
 
-	// Get billing statistics
+	/** Calcule les statistiques de facturation (totaux, états, revenus). */
 	function getBillingStats() {
 		const state = getStoreValue(billingStore);
 		const totalInvoices = state.invoices.length;
@@ -385,7 +398,7 @@ function createBillingStore() {
 		};
 	}
 
-	// Get monthly revenue
+	/** Retourne le revenu mensuel des factures payées. */
 	function getMonthlyRevenue(): { month: string; revenue: number }[] {
 		const state = getStoreValue(billingStore);
 		const monthlyData: { [key: string]: number } = {};
@@ -403,12 +416,12 @@ function createBillingStore() {
 		return Object.entries(monthlyData).map(([month, revenue]) => ({ month, revenue }));
 	}
 
-	// Select invoice
+	/** Sélectionne une facture par ID dans le state. */
 	function selectInvoice(id: string | null) {
 		update((state) => ({ ...state, selectedInvoiceId: id }));
 	}
 
-	// Get selected invoice
+	/** Retourne la facture actuellement sélectionnée. */
 	function getSelectedInvoice(): Invoice | undefined {
 		const state = getStoreValue(billingStore);
 		if (!state.selectedInvoiceId) return undefined;

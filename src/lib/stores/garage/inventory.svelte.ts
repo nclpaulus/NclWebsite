@@ -1,6 +1,14 @@
+/**
+ * Store de gestion des pièces et de l’inventaire du garage.
+ *
+ * Ce store utilise des données mock pour démonstration. Il ne persiste pas les données.
+ */
 import { writable, get as getStoreValue } from 'svelte/store';
 import type { Part, PartUsage, InventoryFilters, CreatePartRequest } from '$lib/types/garage';
 
+/**
+ * État du store inventaire.
+ */
 interface InventoryState {
 	parts: Part[];
 	partUsages: PartUsage[];
@@ -128,10 +136,15 @@ const mockPartUsages: PartUsage[] = [
 	}
 ];
 
+/**
+ * Crée le store d’inventaire avec ses méthodes de gestion.
+ *
+ * @returns Store et helpers pour les pièces, stock, usage, filtres, statistiques.
+ */
 function createInventoryStore() {
 	const { subscribe, update } = writable<InventoryState>(initialState);
 
-	// Initialize with mock data
+	/** Initialise le store avec les données mock. */
 	function initializeInventory() {
 		update((state) => ({
 			...state,
@@ -141,7 +154,7 @@ function createInventoryStore() {
 		}));
 	}
 
-	// Create new part
+	/** Crée une nouvelle pièce dans l’inventaire. */
 	async function createPart(request: CreatePartRequest): Promise<boolean> {
 		update((state) => ({ ...state, loading: true, error: null }));
 
@@ -170,7 +183,7 @@ function createInventoryStore() {
 		}
 	}
 
-	// Update part
+	/** Met à jour une pièce existante. */
 	async function updatePart(id: string, updates: Partial<Part>): Promise<boolean> {
 		update((state) => ({ ...state, loading: true, error: null }));
 
@@ -193,7 +206,7 @@ function createInventoryStore() {
 		}
 	}
 
-	// Delete part
+	/** Supprime une pièce de l’inventaire. */
 	async function deletePart(id: string): Promise<boolean> {
 		update((state) => ({ ...state, loading: true, error: null }));
 
@@ -214,7 +227,7 @@ function createInventoryStore() {
 		}
 	}
 
-	// Update stock quantity
+	/** Met à jour la quantité en stock (ajout, retrait, remplacement). */
 	async function updateStock(
 		id: string,
 		quantity: number,
@@ -251,7 +264,7 @@ function createInventoryStore() {
 		}
 	}
 
-	// Record part usage
+	/** Enregistre l’utilisation d’une pièce pour un rendez-vous (déduit du stock). */
 	async function recordPartUsage(
 		partId: string,
 		appointmentId: string,
@@ -306,17 +319,17 @@ function createInventoryStore() {
 		}
 	}
 
-	// Filter parts
+	/** Applique les filtres sur les pièces. */
 	function filterParts(filters: InventoryFilters) {
 		update((state) => ({ ...state, filters }));
 	}
 
-	// Search parts
+	/** Lance une recherche textuelle sur les pièces. */
 	function searchParts(term: string) {
 		update((state) => ({ ...state, searchTerm: term }));
 	}
 
-	// Get filtered parts
+	/** Retourne les pièces filtrées et triées par nom. */
 	function getFilteredParts(): Part[] {
 		const state = getStoreValue(inventoryStore);
 		let filtered = [...state.parts];
@@ -349,37 +362,37 @@ function createInventoryStore() {
 		return filtered.sort((a, b) => a.name.localeCompare(b.name));
 	}
 
-	// Get parts with low stock
+	/** Retourne les pièces dont le stock est inférieur ou égal au niveau minimum. */
 	function getLowStockParts(): Part[] {
 		const state = getStoreValue(inventoryStore);
 		return state.parts.filter((part) => part.stockQuantity <= part.minStockLevel);
 	}
 
-	// Get part by ID
+	/** Cherche une pièce par ID. */
 	function getPartById(id: string): Part | undefined {
 		const state = getStoreValue(inventoryStore);
 		return state.parts.find((part) => part.id === id);
 	}
 
-	// Get part usages for appointment
+	/** Retourne les utilisations de pièces pour un rendez-vous. */
 	function getPartUsagesForAppointment(appointmentId: string): PartUsage[] {
 		const state = getStoreValue(inventoryStore);
 		return state.partUsages.filter((usage) => usage.appointmentId === appointmentId);
 	}
 
-	// Get categories
+	/** Retourne la liste des catégories uniques triées. */
 	function getCategories(): string[] {
 		const state = getStoreValue(inventoryStore);
 		return [...new Set(state.parts.map((part) => part.category))].sort();
 	}
 
-	// Get brands
+	/** Retourne la liste des marques uniques triées. */
 	function getBrands(): string[] {
 		const state = getStoreValue(inventoryStore);
 		return [...new Set(state.parts.map((part) => part.brand))].sort();
 	}
 
-	// Get inventory statistics
+	/** Calcule les statistiques de l’inventaire (nombre, stock faible, valeur totale). */
 	function getInventoryStats() {
 		const state = getStoreValue(inventoryStore);
 		const totalParts = state.parts.length;

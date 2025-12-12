@@ -1,6 +1,6 @@
 // Core entities for AutoPro Garage management system
 
-// Vehicle related types
+/** Véhicule du client (marque, modèle, immatriculation, kilométrage...). */
 export interface Vehicle {
 	id: string;
 	make: string;
@@ -15,6 +15,7 @@ export interface Vehicle {
 	updatedAt: Date;
 }
 
+/** Client du garage (coordonnées, véhicules associés). */
 export interface Customer {
 	id: string;
 	firstName: string;
@@ -27,7 +28,7 @@ export interface Customer {
 	updatedAt: Date;
 }
 
-// Appointment related types
+/** Rendez-vous (client, véhicule, date, statut, mécanicien...). */
 export interface Appointment {
 	id: string;
 	customerId: string;
@@ -45,6 +46,7 @@ export interface Appointment {
 	updatedAt: Date;
 }
 
+/** Créneau horaire disponible pour rendez-vous. */
 export interface AppointmentSlot {
 	id: string;
 	startTime: Date;
@@ -54,7 +56,7 @@ export interface AppointmentSlot {
 	appointmentId?: string;
 }
 
-// Inventory related types
+/** Pièce en stock (référence, catégorie, prix, stock, fournisseur...). */
 export interface Part {
 	id: string;
 	name: string;
@@ -71,6 +73,7 @@ export interface Part {
 	updatedAt: Date;
 }
 
+/** Utilisation d’une pièce pour un rendez-vous (quantité, prix). */
 export interface PartUsage {
 	id: string;
 	partId: string;
@@ -81,7 +84,7 @@ export interface PartUsage {
 	usedAt: Date;
 }
 
-// Service related types
+/** Service proposé par le garage (nom, durée, prix de base). */
 export interface Service {
 	id: string;
 	name: string;
@@ -94,7 +97,7 @@ export interface Service {
 	updatedAt: Date;
 }
 
-// Billing related types
+/** Facture client (lignes, TVA, statut, paiement). */
 export interface Invoice {
 	id: string;
 	appointmentId: string;
@@ -116,6 +119,7 @@ export interface Invoice {
 	updatedAt: Date;
 }
 
+/** Ligne de facture (pièce ou service). */
 export interface InvoiceItem {
 	id: string;
 	description: string;
@@ -125,7 +129,7 @@ export interface InvoiceItem {
 	type: 'part' | 'service' | 'labor';
 }
 
-// Mechanic related types
+/** Mécanicien (compétences, taux horaire, disponibilité). */
 export interface Mechanic {
 	id: string;
 	firstName: string;
@@ -140,7 +144,7 @@ export interface Mechanic {
 	updatedAt: Date;
 }
 
-// Notification related types
+/** Notification envoyée (SMS/email) avec statut de livraison. */
 export interface Notification {
 	id: string;
 	type: 'sms' | 'email';
@@ -156,6 +160,7 @@ export interface Notification {
 	updatedAt: Date;
 }
 
+/** Modèle de notification (variables, message, type). */
 export interface NotificationTemplate {
 	id: string;
 	name: string;
@@ -166,7 +171,7 @@ export interface NotificationTemplate {
 	isActive: boolean;
 }
 
-// Dashboard and analytics types
+/** Statistiques du dashboard garage. */
 export interface DashboardStats {
 	totalAppointments: number;
 	todayAppointments: number;
@@ -178,19 +183,21 @@ export interface DashboardStats {
 	avgServiceTime: number;
 }
 
+/** Statistiques de rendez-vous par date. */
 export interface AppointmentStats {
 	date: string;
 	count: number;
 	revenue: number;
 }
 
+/** Statistiques de revenus par période. */
 export interface RevenueStats {
 	period: string;
 	amount: number;
 	invoiceCount: number;
 }
 
-// Form types for creating/updating entities
+/** Requête de création de rendez-vous. */
 export interface CreateAppointmentRequest {
 	customerId: string;
 	vehicleId: string;
@@ -201,6 +208,7 @@ export interface CreateAppointmentRequest {
 	mechanicId?: string;
 }
 
+/** Requête de création de facture. */
 export interface CreateInvoiceRequest {
 	appointmentId: string;
 	parts: Omit<InvoiceItem, 'id'>[];
@@ -209,6 +217,7 @@ export interface CreateInvoiceRequest {
 	notes?: string;
 }
 
+/** Requête de création de pièce en stock. */
 export interface CreatePartRequest {
 	name: string;
 	reference: string;
@@ -221,7 +230,7 @@ export interface CreatePartRequest {
 	description?: string;
 }
 
-// Filter and search types
+/** Filtres pour les rendez-vous. */
 export interface AppointmentFilters {
 	status?: Appointment['status'];
 	dateFrom?: Date;
@@ -230,6 +239,7 @@ export interface AppointmentFilters {
 	customerId?: string;
 }
 
+/** Filtres pour l’inventaire. */
 export interface InventoryFilters {
 	category?: string;
 	brand?: string;
@@ -237,7 +247,7 @@ export interface InventoryFilters {
 	search?: string;
 }
 
-// API response types
+/** Réponse API générique. */
 export interface ApiResponse<T> {
 	success: boolean;
 	data?: T;
@@ -245,6 +255,7 @@ export interface ApiResponse<T> {
 	message?: string;
 }
 
+/** Réponse paginée générique. */
 export interface PaginatedResponse<T> {
 	data: T[];
 	total: number;

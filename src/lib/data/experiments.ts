@@ -1,5 +1,8 @@
 import type { LabExperiment } from '$lib/types/content';
 
+/**
+ * Données statiques: liste des expériences / POC affichées dans la section Lab.
+ */
 export const experiments: LabExperiment[] = [
 	{
 		slug: 'profile-switcher-animation',
@@ -83,14 +86,17 @@ export const experiments: LabExperiment[] = [
 	}
 ];
 
+/** Récupère une expérience par son `slug`. */
 export function getExperimentBySlug(slug: string): LabExperiment | undefined {
 	return experiments.find((exp) => exp.slug === slug);
 }
 
+/** Filtre les expériences par type (`demo`/`poc`/`tool`...). */
 export function getExperimentsByType(type: LabExperiment['type']): LabExperiment[] {
 	return experiments.filter((exp) => exp.type === type);
 }
 
+/** Filtre les expériences contenant un tag donné. */
 export function getExperimentsByTag(tag: string): LabExperiment[] {
 	return experiments.filter((exp) => exp.tags.includes(tag));
 }

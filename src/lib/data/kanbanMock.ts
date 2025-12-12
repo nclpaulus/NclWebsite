@@ -1,5 +1,11 @@
 import type { Board, Card, Column, Label, User } from '$lib/types/kanban';
 
+/**
+ * Données mock Kanban.
+ *
+ * Utilisées comme fallback en développement lorsque l'IndexedDB est vide/non disponible.
+ */
+
 /** Données mock (démo). */
 export const mockUsers: User[] = [
 	{
@@ -31,6 +37,7 @@ export const mockLabels: Label[] = [
 	{ id: '5', name: 'Review', color: '#8b5cf6' }
 ];
 
+/** Génère une liste de boards de démo. */
 export function generateMockBoards(): Board[] {
 	const mockBoard: Board = {
 		id: '1',
@@ -48,6 +55,7 @@ export function generateMockBoards(): Board[] {
 	return [mockBoard];
 }
 
+/** Génère les colonnes de démo. */
 export function generateMockColumns(): Column[] {
 	return [
 		{
@@ -89,6 +97,7 @@ export function generateMockColumns(): Column[] {
 	];
 }
 
+/** Génère les cartes de démo. */
 export function generateMockCards(): Card[] {
 	return [
 		{

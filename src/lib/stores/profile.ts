@@ -1,13 +1,24 @@
+/**
+ * Store de gestion du profil utilisateur et du thème.
+ *
+ * Persiste le profil dans IndexedDB avec fallback localStorage.
+ */
 import { writable, derived } from 'svelte/store';
 import { browser } from '$app/environment';
 import { profileDB, type Profile, type ProfileTheme } from '$lib/services/profileDB';
 
+/**
+ * Crée le store de profil avec persistance IndexedDB et fallback localStorage.
+ *
+ * @returns Store avec méthodes init, switch, reset et abonnement Svelte.
+ */
 function createProfileStore() {
 	const { subscribe, set } = writable<Profile | null>(null);
 	let initialized = false;
 
 	return {
 		subscribe,
+		/** Initialise le store depuis IndexedDB ou localStorage. */
 		init: async () => {
 			if (initialized || !browser) return;
 
@@ -37,6 +48,7 @@ function createProfileStore() {
 				initialized = true;
 			}
 		},
+		/** Bascule vers un nouveau profil et le persiste. */
 		switch: async (newProfile: Profile) => {
 			if (!browser) return;
 
@@ -53,6 +65,7 @@ function createProfileStore() {
 				updateThemeSafe(newProfile);
 			}
 		},
+		/** Réinitialise le profil à null et nettoie la persistance. */
 		reset: async () => {
 			if (!browser) return;
 
@@ -72,12 +85,13 @@ function createProfileStore() {
 
 export const profile = createProfileStore();
 
-// Store dérivé pour le thème actuel
+/** Store dérivé pour le thème actuel en fonction du profil. */
 export const currentTheme = derived(profile, ($profile) => getThemeForProfile($profile));
 
-// Store dérivé pour savoir si un profil est sélectionné
+/** Store dérivé pour savoir si un profil est sélectionné. */
 export const hasProfile = derived(profile, ($profile) => $profile !== null);
 
+/** Retourne les couleurs du thème pour un profil donné. */
 function getThemeForProfile(profile: Profile | null): ProfileTheme {
 	const themes = {
 		pro: {
@@ -112,7 +126,7 @@ function getThemeForProfile(profile: Profile | null): ProfileTheme {
 	return themes[profile || 'lambda'];
 }
 
-// Fonction safe pour la mise à jour du thème (client-side seulement)
+/** Applique le thème au DOM côté client uniquement. */
 function updateThemeSafe(profile: Profile | null) {
 	if (!browser) return;
 
@@ -131,7 +145,7 @@ function updateThemeSafe(profile: Profile | null) {
 	}
 }
 
-// Fonctions utilitaires pour les profils
+/** Métadonnées des profils (nom, icône, description, couleur). */
 export const profileInfo = {
 	pro: {
 		name: 'Professionnel',

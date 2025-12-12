@@ -13,13 +13,23 @@ export interface SettingItem {
 	timestamp?: number;
 }
 
+/**
+ * Accès persistant aux préférences de profil via IndexedDB.
+ *
+ * Remarque: ce service s'utilise côté navigateur (IndexedDB). Utiliser `isSupported()` avant.
+ */
 export class ProfileDB {
 	private db: IDBDatabase | null = null;
 	private readonly DB_NAME = 'NPaulusProfile';
 	private readonly VERSION = 1;
 	private readonly STORE_NAME = 'settings';
 
+	/** Initialise la base IndexedDB et prépare l'object store. */
 	async init(): Promise<void> {
+		if (!this.isSupported()) {
+			throw new Error('IndexedDB non supportée');
+		}
+
 		return new Promise((resolve, reject) => {
 			const request = indexedDB.open(this.DB_NAME, this.VERSION);
 
@@ -38,6 +48,7 @@ export class ProfileDB {
 		});
 	}
 
+	/** Sauvegarde une clé/valeur dans l'object store. */
 	async setSetting(key: string, value: unknown): Promise<void> {
 		if (!this.db) await this.init();
 
@@ -51,6 +62,7 @@ export class ProfileDB {
 		});
 	}
 
+	/** Lit une valeur typée depuis l'object store. */
 	async getSetting<T>(key: string): Promise<T | null> {
 		if (!this.db) await this.init();
 
@@ -64,6 +76,7 @@ export class ProfileDB {
 		});
 	}
 
+	/** Retourne toutes les settings sous forme de dictionnaire. */
 	async getAllSettings(): Promise<Record<string, unknown>> {
 		if (!this.db) await this.init();
 
@@ -83,6 +96,7 @@ export class ProfileDB {
 		});
 	}
 
+	/** Efface toutes les settings. */
 	async clearSettings(): Promise<void> {
 		if (!this.db) await this.init();
 
@@ -96,12 +110,12 @@ export class ProfileDB {
 		});
 	}
 
+	/** Sauvegarde plusieurs settings en une fois. */
 	async saveProfileSettings(settings: Partial<ProfileSettings>): Promise<void> {
-		Object.entries(settings).forEach(async ([key, value]) => {
-			await this.setSetting(key, value);
-		});
+		await Promise.all(Object.entries(settings).map(([key, value]) => this.setSetting(key, value)));
 	}
 
+	/** Charge les settings principales de profil (avec valeurs par défaut). */
 	async getProfileSettings(): Promise<ProfileSettings> {
 		const [currentProfile, themePreferences, lastVisit] = await Promise.all([
 			this.getSetting<Profile>('currentProfile'),
@@ -116,6 +130,7 @@ export class ProfileDB {
 		};
 	}
 
+	/** Indique si IndexedDB est disponible dans l'environnement courant. */
 	isSupported(): boolean {
 		return typeof indexedDB !== 'undefined';
 	}

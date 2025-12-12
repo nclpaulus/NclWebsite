@@ -1,5 +1,10 @@
 import type { KanbanState } from '$lib/types/kanban';
 
+/**
+ * Représentation persistée (IndexedDB) du state Kanban.
+ *
+ * Remarque: on stocke un snapshot complet sérialisé (dates => ISO strings).
+ */
 export interface PersistedKanbanState {
 	boards: unknown[];
 	currentBoard: unknown | null;
@@ -12,6 +17,11 @@ export interface PersistedKanbanState {
 	filters: Record<string, unknown>;
 }
 
+/**
+ * Accès persistant au state Kanban via IndexedDB.
+ *
+ * Ce service est destiné au navigateur. Utiliser `isSupported()` avant `init()`.
+ */
 export class KanbanDB {
 	private db: IDBDatabase | null = null;
 	private readonly DB_NAME = 'NPaulusKanban';
@@ -19,12 +29,16 @@ export class KanbanDB {
 	private readonly STORE_NAME = 'state';
 	private readonly STATE_KEY = 'kanban';
 
+	/** Indique si IndexedDB est disponible dans l'environnement courant. */
 	isSupported(): boolean {
 		return typeof indexedDB !== 'undefined';
 	}
 
+	/** Initialise la base IndexedDB et prépare l'object store. */
 	async init(): Promise<void> {
-		if (!this.isSupported()) return;
+		if (!this.isSupported()) {
+			throw new Error('IndexedDB non supportée');
+		}
 
 		return new Promise((resolve, reject) => {
 			const request = indexedDB.open(this.DB_NAME, this.VERSION);
@@ -44,6 +58,7 @@ export class KanbanDB {
 		});
 	}
 
+	/** Écrit le snapshot complet du state. */
 	async setState(state: PersistedKanbanState): Promise<void> {
 		if (!this.db) await this.init();
 		if (!this.db) return;
@@ -58,6 +73,7 @@ export class KanbanDB {
 		});
 	}
 
+	/** Lit le snapshot complet du state. */
 	async getState(): Promise<PersistedKanbanState | null> {
 		if (!this.db) await this.init();
 		if (!this.db) return null;
@@ -72,6 +88,7 @@ export class KanbanDB {
 		});
 	}
 
+	/** Supprime le snapshot du state. */
 	async clear(): Promise<void> {
 		if (!this.db) await this.init();
 		if (!this.db) return;
@@ -90,9 +107,12 @@ export class KanbanDB {
 export const kanbanDB = new KanbanDB();
 
 function isIsoString(value: unknown): value is string {
-	return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value);
+	return (
+		typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/.test(value)
+	);
 }
 
+/** Sérialise le state pour IndexedDB (dates => ISO strings). */
 export function serializeKanbanState(state: KanbanState): PersistedKanbanState {
 	return JSON.parse(
 		JSON.stringify(state, (_key, value) => {
@@ -102,8 +122,24 @@ export function serializeKanbanState(state: KanbanState): PersistedKanbanState {
 	) as PersistedKanbanState;
 }
 
+/** Désérialise le state depuis IndexedDB (ISO strings => Date). */
 export function deserializeKanbanState(raw: PersistedKanbanState): KanbanState {
-	return JSON.parse(JSON.stringify(raw), (_key, value) =>
-		isIsoString(value) ? new Date(value) : value
-	) as KanbanState;
+	try {
+		return JSON.parse(JSON.stringify(raw), (_key, value) =>
+			isIsoString(value) ? new Date(value) : value
+		) as KanbanState;
+	} catch {
+		// Si les données persistées sont corrompues, on retourne un état vide.
+		return {
+			boards: [],
+			currentBoard: null,
+			columns: [],
+			cards: [],
+			users: [],
+			labels: [],
+			loading: false,
+			error: null,
+			filters: {}
+		};
+	}
 }

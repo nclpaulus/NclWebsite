@@ -1,5 +1,8 @@
 import type { Project } from '$lib/types/content';
 
+/**
+ * Données statiques: liste des projets affichés dans la section Projects/Portfolio.
+ */
 export const projects: Project[] = [
 	{
 		slug: 'npaulus-website',
@@ -109,22 +112,27 @@ export const projects: Project[] = [
 	}
 ];
 
+/** Récupère un projet par son `slug`. */
 export function getProjectBySlug(slug: string): Project | undefined {
 	return projects.find((project) => project.slug === slug);
 }
 
+/** Filtre les projets par type (`real`/`demo`/`mock`). */
 export function getProjectsByType(type: Project['type']): Project[] {
 	return projects.filter((project) => project.type === type);
 }
 
+/** Filtre les projets par statut (`completed`, etc.). */
 export function getProjectsByStatus(status: Project['status']): Project[] {
 	return projects.filter((project) => project.status === status);
 }
 
+/** Filtre les projets contenant un tag donné. */
 export function getProjectsByTag(tag: string): Project[] {
 	return projects.filter((project) => project.tags.includes(tag));
 }
 
+/** Renvoie les projets “featured” (actuellement: 3 premiers projets complétés). */
 export function getFeaturedProjects(): Project[] {
 	return projects.filter((project) => project.status === 'completed').slice(0, 3);
 }

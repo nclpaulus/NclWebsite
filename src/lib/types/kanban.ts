@@ -1,3 +1,4 @@
+/** Utilisateur du Kanban (nom, email, avatar). */
 export interface User {
 	id: string;
 	name: string;
@@ -5,6 +6,7 @@ export interface User {
 	avatar?: string;
 }
 
+/** Commentaire sur une carte (auteur, contenu, dates). */
 export interface Comment {
 	id: string;
 	cardId: string;
@@ -14,6 +16,7 @@ export interface Comment {
 	updatedAt: Date;
 }
 
+/** Pièce jointe à une carte (image, document, lien). */
 export interface Attachment {
 	id: string;
 	cardId: string;
@@ -24,6 +27,7 @@ export interface Attachment {
 	createdAt: Date;
 }
 
+/** Carte du Kanban (titre, description, colonne, labels, assignés...). */
 export interface Card {
 	id: string;
 	title: string;
@@ -41,12 +45,14 @@ export interface Card {
 	createdBy: string;
 }
 
+/** Étiquette colorée pour les cartes. */
 export interface Label {
 	id: string;
 	name: string;
 	color: string;
 }
 
+/** Colonne du tableau (titre, position, cartes). */
 export interface Column {
 	id: string;
 	title: string;
@@ -57,6 +63,7 @@ export interface Column {
 	updatedAt: Date;
 }
 
+/** Tableau Kanban (colonnes, cartes, membres, permissions). */
 export interface Board {
 	id: string;
 	title: string;
@@ -70,6 +77,7 @@ export interface Board {
 	updatedAt: Date;
 }
 
+/** Filtres appliqués aux cartes d’un tableau. */
 export interface BoardFilters {
 	search?: string;
 	assignedTo?: string[];
@@ -78,6 +86,7 @@ export interface BoardFilters {
 	createdBy?: string;
 }
 
+/** État global du store Kanban. */
 export interface KanbanState {
 	boards: Board[];
 	currentBoard: Board | null;
@@ -90,28 +99,33 @@ export interface KanbanState {
 	filters: BoardFilters;
 }
 
+/** Requête de création de tableau. */
 export interface CreateBoardRequest {
 	title: string;
 	description?: string;
 	isPublic?: boolean;
 }
 
+/** Requête de mise à jour de tableau. */
 export interface UpdateBoardRequest {
 	title?: string;
 	description?: string;
 	isPublic?: boolean;
 }
 
+/** Requête de création de colonne. */
 export interface CreateColumnRequest {
 	title: string;
 	color?: string;
 }
 
+/** Requête de mise à jour de colonne. */
 export interface UpdateColumnRequest {
 	title?: string;
 	color?: string;
 }
 
+/** Requête de création de carte. */
 export interface CreateCardRequest {
 	title: string;
 	description?: string;
@@ -121,6 +135,7 @@ export interface CreateCardRequest {
 	assignedUsers?: string[];
 }
 
+/** Requête de mise à jour de carte. */
 export interface UpdateCardRequest {
 	title?: string;
 	description?: string;
@@ -131,16 +146,19 @@ export interface UpdateCardRequest {
 	assignedUsers?: string[];
 }
 
+/** Requête de déplacement de carte entre colonnes. */
 export interface MoveCardRequest {
 	cardId: string;
 	targetColumnId: string;
 	targetPosition: number;
 }
 
+/** Requête de création de commentaire. */
 export interface CreateCommentRequest {
 	content: string;
 }
 
+/** Requête de mise à jour de commentaire. */
 export interface UpdateCommentRequest {
 	content: string;
 }

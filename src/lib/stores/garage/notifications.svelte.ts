@@ -1,7 +1,15 @@
+/**
+ * Store de gestion des notifications et templates du garage.
+ *
+ * Ce store utilise des données mock pour démonstration. Il ne persiste pas les données.
+ */
 import { writable, get as getStoreValue } from 'svelte/store';
 import { SvelteDate } from 'svelte/reactivity';
 import type { Notification, NotificationTemplate } from '$lib/types/garage';
 
+/**
+ * État du store notifications.
+ */
 interface NotificationState {
 	notifications: Notification[];
 	templates: NotificationTemplate[];
@@ -68,10 +76,15 @@ const mockTemplates: NotificationTemplate[] = [
 	}
 ];
 
+/**
+ * Crée le store de notifications avec ses méthodes de gestion.
+ *
+ * @returns Store et helpers pour envoyer des notifications (SMS/email), templates, rappels, statistiques.
+ */
 function createNotificationStore() {
 	const { subscribe, update } = writable<NotificationState>(initialState);
 
-	// Initialize with mock data
+	/** Initialise le store avec les templates mock. */
 	function initializeNotifications() {
 		update((state) => ({
 			...state,
@@ -80,7 +93,7 @@ function createNotificationStore() {
 		}));
 	}
 
-	// Send notification
+	/** Envoie une notification directe (SMS ou email). */
 	async function sendNotification(
 		type: 'sms' | 'email',
 		recipient: string,
@@ -126,7 +139,7 @@ function createNotificationStore() {
 		}
 	}
 
-	// Send notification using template
+	/** Envoie une notification à partir d’un template avec variables. */
 	async function sendTemplateNotification(
 		templateId: string,
 		recipient: string,
@@ -167,7 +180,9 @@ function createNotificationStore() {
 		);
 	}
 
-	// Convenience methods for common notifications
+	/** Rappels et notifications pratiques pour les cas courants. */
+
+	/** Envoie un SMS de rappel et un email de confirmation pour un rendez-vous. */
 	async function notifyAppointmentReminder(
 		customerEmail: string,
 		customerPhone: string,
@@ -205,6 +220,7 @@ function createNotificationStore() {
 		);
 	}
 
+	/** Notifie un client qu’une facture a été envoyée. */
 	async function notifyInvoiceSent(
 		customerEmail: string,
 		firstName: string,
@@ -227,6 +243,7 @@ function createNotificationStore() {
 		);
 	}
 
+	/** Notifie un client que son véhicule est prêt. */
 	async function notifyServiceCompleted(
 		customerPhone: string,
 		firstName: string,
@@ -243,6 +260,7 @@ function createNotificationStore() {
 		);
 	}
 
+	/** Alerte l’admin qu’une pièce est en stock faible. */
 	async function notifyLowStock(
 		adminEmail: string,
 		partName: string,
@@ -258,19 +276,19 @@ function createNotificationStore() {
 		});
 	}
 
-	// Get notifications by type
+	/** Retourne les notifications par type (sms/email). */
 	function getNotificationsByType(type: 'sms' | 'email'): Notification[] {
 		const state = getStoreValue(notificationStore);
 		return state.notifications.filter((n) => n.type === type);
 	}
 
-	// Get notifications by status
+	/** Retourne les notifications par statut. */
 	function getNotificationsByStatus(status: Notification['status']): Notification[] {
 		const state = getStoreValue(notificationStore);
 		return state.notifications.filter((n) => n.status === status);
 	}
 
-	// Get notifications for entity
+	/** Retourne les notifications liées à une entité (rendez-vous, facture, véhicule). */
 	function getNotificationsForEntity(
 		entityId: string,
 		entityType?: 'appointment' | 'invoice' | 'vehicle'
@@ -281,7 +299,7 @@ function createNotificationStore() {
 		);
 	}
 
-	// Get notification statistics
+	/** Calcule les statistiques des notifications (totaux, types, statuts). */
 	function getNotificationStats() {
 		const state = getStoreValue(notificationStore);
 		const total = state.notifications.length;
@@ -301,7 +319,7 @@ function createNotificationStore() {
 		};
 	}
 
-	// Clear old notifications (older than 30 days)
+	/** Supprime les notifications de plus de 30 jours. */
 	function clearOldNotifications() {
 		update((currentState) => {
 			const thirtyDaysAgo = new SvelteDate();
