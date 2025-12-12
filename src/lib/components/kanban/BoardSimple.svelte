@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import type { Board, Column as ColumnType, Card } from '$lib/types/kanban';
 	import Column from './Column.svelte';
-	import Button from '$lib/components/ui/button.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 
 	interface Props {

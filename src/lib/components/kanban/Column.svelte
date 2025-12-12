@@ -2,7 +2,7 @@
 	import { kanbanStore } from '$lib/stores/kanban.svelte';
 	import type { Column, Card as CardType } from '$lib/types/kanban';
 	import CardComponent from './Card.svelte';
-	import Button from '$lib/components/ui/button.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 
 	interface Props {
 		column: Column;

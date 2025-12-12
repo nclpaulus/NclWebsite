@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { experiments, getExperimentsByType } from '$lib/data/experiments';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
-	import Button from '$lib/components/ui/button.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import { Card, CardContent } from '$lib/components/ui/card';
 </script>
 

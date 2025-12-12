@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import { projects, getProjectBySlug } from '$lib/data/projects';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
-	import Button from '$lib/components/ui/button.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import { Card, CardContent } from '$lib/components/ui/card';
 	import { goto } from '$app/navigation';
 

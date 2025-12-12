@@ -3,7 +3,7 @@
 	import { kanbanStore } from '$lib/stores/kanban.svelte';
 	import type { Board } from '$lib/types/kanban';
 	import BoardCard from '$lib/components/kanban/BoardCard.svelte';
-	import Button from '$lib/components/ui/button.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 
 	let boards = $state<Board[]>([]);
 	let loading = $state(true);

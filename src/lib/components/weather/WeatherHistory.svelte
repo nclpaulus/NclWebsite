@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Card from '$lib/components/ui/card/card.svelte';
-	import Button from '$lib/components/ui/button.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import type { WeatherHistory } from '$lib/stores/weather.svelte';
 
 	export let history: WeatherHistory[];

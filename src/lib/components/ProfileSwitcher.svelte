@@ -2,7 +2,7 @@
 	import { profile, profileInfo } from '$lib/stores/profile';
 	import type { Profile } from '$lib/services/profileDB';
 	import { profileDB } from '$lib/services/profileDB';
-	import Button from '$lib/components/ui/button.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 
 	let isOpen = $state(false);
 

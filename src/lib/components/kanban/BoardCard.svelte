@@ -2,7 +2,7 @@
 	import { kanbanStore } from '$lib/stores/kanban.svelte';
 	import { goto } from '$app/navigation';
 	import type { Board } from '$lib/types/kanban';
-	import Button from '$lib/components/ui/button.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 
 	interface Props {

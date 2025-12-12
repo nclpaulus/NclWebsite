@@ -5,7 +5,7 @@
 	import WeatherMap from '$lib/components/weather/WeatherMap.svelte';
 	import WeatherHistory from '$lib/components/weather/WeatherHistory.svelte';
 	import { weatherStore } from '$lib/stores/weather.svelte';
-	import Button from '$lib/components/ui/button.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import Card from '$lib/components/ui/card/card.svelte';
 
 	let loading = true;

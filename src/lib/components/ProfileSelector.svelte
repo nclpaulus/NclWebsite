@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { profile } from '$lib/stores/profile';
 	import type { Profile } from '$lib/services/profileDB';
-	import Button from '$lib/components/ui/button.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import Logo from '$lib/components/Logo.svelte';
 	import { fade } from 'svelte/transition';
 	import { goto } from '$app/navigation';
