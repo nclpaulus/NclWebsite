@@ -59,6 +59,9 @@
 	const logoClass = $derived(
 		`${sizeClasses[size]} transition-all duration-300 hover:scale-110 hover:rotate-3 ${className}`
 	);
+	const imgClass = $derived(
+		`w-full h-full object-contain`
+	);
 	const textClassFull = $derived(
 		`${textSizeClasses[size]} font-bold text-foreground hover:text-primary transition-colors ${textClass}`
 	);
@@ -76,16 +79,18 @@
 </script>
 
 <svelte:element this={Wrapper} {...wrapperProps} aria-label={ariaLabel}>
-	<img
-		src={logoSrc}
-		srcset={logoSrcset}
-		sizes={logoSizes}
-		alt="NPaulusWebsite Logo"
-		class={logoClass}
-		fetchpriority={fetchPriority}
-		loading={fetchPriority === 'high' ? 'eager' : 'lazy'}
-		decoding="async"
-	/>
+	<div class={logoClass}>
+		<img
+			src={logoSrc}
+			srcset={logoSrcset}
+			sizes={logoSizes}
+			alt="NPaulusWebsite Logo"
+			class={imgClass}
+			fetchpriority={fetchPriority}
+			loading={fetchPriority === 'high' ? 'eager' : 'lazy'}
+			decoding="async"
+		/>
+	</div>
 
 	{#if withText}
 		<span class={textClassFull}>NPaulusWebsite</span>

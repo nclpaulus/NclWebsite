@@ -28,6 +28,8 @@
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.13.0",
 		"globals": "^16.5.0",
+		"imagemin": "^9.0.1",
+		"imagemin-pngquant": "^10.0.0",
 		"postcss": "^8.5.6",
 		"prettier": "^3.6.2",
 		"prettier-plugin-svelte": "^3.4.0",
@@ -47,6 +49,7 @@
 		"bits-ui": "^2.14.4",
 		"class-variance-authority": "^0.7.1",
 		"leaflet": "^1.9.4",
-		"mermaid": "^11.12.2"
+		"mermaid": "^11.12.2",
+		"sharp": "^0.34.5"
 	}
 }
