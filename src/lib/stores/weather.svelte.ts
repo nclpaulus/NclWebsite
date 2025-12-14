@@ -301,6 +301,7 @@ function createWeatherStore() {
 
 	/** Initialise le store (charge cache, puis rafraîchit si nécessaire). */
 	async function initializeWeather() {
+		if (!browser) return;
 		if (!initialized) {
 			loadFromStorage();
 			initialized = true;

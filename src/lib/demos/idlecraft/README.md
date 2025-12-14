@@ -83,6 +83,24 @@ Note Supabase : `@supabase/auth-helpers-sveltekit` est déprécié. L’approche
   - `src/routes/lab/idlecraft/(app)/leaderboard/+page.svelte`
 - Compte email/password : `src/routes/lab/idlecraft/account/+page.svelte` + `+page.server.ts`.
 
+### DB (MVP) + RLS
+- Tables créées : `players`, `inventory_items`.
+- RLS activée + policies “own data” sur `players` et `inventory_items`.
+
+### Auth Providers
+- Google OAuth configuré et fonctionnel en local.
+
+### Couche server-only (RPC wrappers)
+- `src/lib/demos/idlecraft/server/rpc.server.ts` : wrappers `idlecraftRpc.*` (server-only).
+- `src/lib/demos/idlecraft/server/auth.server.ts` : helpers `getIdlecraftUserId` / `requireIdlecraftUserId`.
+
+### WIP : wiring app → DB/RPC
+- `/lab/idlecraft/app` est branchée côté serveur via :
+  - `src/routes/lab/idlecraft/(app)/app/+page.server.ts`
+  - affichage “debug” : player + inventaire + retour du tick
+
+Note : juste après une première connexion, le player est créé avec `last_tick_at = now()`, donc un premier `tick_offline` peut retourner `elapsed_seconds = 0`. Pour valider rapidement le tick : attendre 3–10 secondes, rafraîchir `/lab/idlecraft/app`, ou fermer l’onglet et revenir plus tard.
+
 ---
 
 ## Prochaines étapes (recommandées)
