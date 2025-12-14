@@ -3,6 +3,7 @@
 	import { kanbanStore } from '$lib/stores/kanban.svelte';
 	import { goto } from '$app/navigation';
 	import type { Board, Column as ColumnType, Card } from '$lib/types/kanban';
+	import { KANBAN_BASE_PATH } from '$lib/demos/kanban';
 	import Column from './Column.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
@@ -44,7 +45,7 @@
 	);
 
 	function goBack() {
-		goto('/kanban');
+		goto(KANBAN_BASE_PATH);
 	}
 </script>
 

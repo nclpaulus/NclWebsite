@@ -4,6 +4,7 @@
 	import { kanbanStore } from '$lib/stores/kanban.svelte';
 	import { goto } from '$app/navigation';
 	import type { Board, Column as ColumnType, Card } from '$lib/types/kanban';
+	import { KANBAN_BASE_PATH } from '$lib/demos/kanban';
 	import Column from './Column.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
@@ -258,7 +259,7 @@
 				<div class="text-6xl mb-4">📋</div>
 				<h3 class="text-xl font-semibold mb-2">Tableau introuvable</h3>
 				<p class="text-muted-foreground mb-6">Ce tableau n'existe pas ou vous n'y avez pas accès</p>
-				<Button onclick={() => goto('/kanban')}>Retour aux tableaux</Button>
+				<Button onclick={() => goto(KANBAN_BASE_PATH)}>Retour aux tableaux</Button>
 			</div>
 		</div>
 	{:else}
@@ -272,7 +273,7 @@
 						<Button
 							variant="ghost"
 							size="sm"
-							onclick={() => goto('/kanban')}
+							onclick={() => goto(KANBAN_BASE_PATH)}
 							class="flex items-center gap-2"
 						>
 							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

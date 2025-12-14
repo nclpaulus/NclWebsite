@@ -2,6 +2,7 @@
 	import { weatherStore, type WeatherData } from '$lib/stores/weather.svelte';
 	import { onMount, onDestroy } from 'svelte';
 	import { slide, scale } from 'svelte/transition';
+	import { WEATHER_BASE_PATH } from '$lib/demos/weather';
 	import { goto } from '$app/navigation';
 
 	interface Props {
@@ -101,7 +102,7 @@
 
 	// Go to full weather page
 	function goToWeatherPage() {
-		goto('/weather');
+		window.location.href = WEATHER_BASE_PATH;
 	}
 </script>
 

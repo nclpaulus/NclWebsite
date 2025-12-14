@@ -7,7 +7,7 @@ export interface LabExperiment {
 	solution: string;
 	techStack: string[];
 	liveUrl?: string;
-	githubUrl?: string;
+	sourceUrl?: string;
 	type: 'demo' | 'tool' | 'poc';
 	date: string;
 	difficulty: 'easy' | 'medium' | 'hard';
