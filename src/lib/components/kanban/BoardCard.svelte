@@ -2,6 +2,7 @@
 	import { kanbanStore } from '$lib/stores/kanban.svelte';
 	import { goto } from '$app/navigation';
 	import type { Board } from '$lib/types/kanban';
+	import { kanbanBoardPath } from '$lib/demos/kanban';
 	import Button from '$lib/components/ui/button.svelte';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 
@@ -12,7 +13,7 @@
 	let { board }: Props = $props();
 
 	function navigateToBoard() {
-		goto(`/kanban/${board.id}`);
+		goto(kanbanBoardPath(board.id));
 	}
 
 	async function handleDeleteBoard() {
