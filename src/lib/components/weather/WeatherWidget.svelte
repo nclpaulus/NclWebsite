@@ -3,7 +3,6 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { slide, scale } from 'svelte/transition';
 	import { WEATHER_BASE_PATH } from '$lib/demos/weather';
-	import { goto } from '$app/navigation';
 
 	interface Props {
 		position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
