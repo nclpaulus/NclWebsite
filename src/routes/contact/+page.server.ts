@@ -81,7 +81,7 @@ export const actions = {
 			await resend.emails.send({
 				from: 'contact@npaulus.website',
 				to: safeEmail,
-				subject: 'Confirmation de votre message - WeCraft',
+				subject: 'Confirmation de votre message - Nicolas Paulus',
 				html: `
 					<h2>Merci pour votre message !</h2>
 					<p>Bonjour ${safeName},</p>
@@ -92,7 +92,7 @@ export const actions = {
 					<p><em>${safeMessage.replace(/\n/g, '<br>')}</em></p>
 					<br>
 					<p>Cordialement,</p>
-					<p>L'équipe WeCraft</p>
+					<p>L'équipe Nicolas Paulus</p>
 				`
 			});
 

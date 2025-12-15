@@ -32,8 +32,8 @@
 	<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
 	<link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png" />
 	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-	<title>WeCraft</title>
-	<meta name="description" content="Site web personnel - Portfolio, Gaming, Blog et Contact" />
+	<title>Nicolas Paulus - Portfolio & Projets</title>
+	<meta name="description" content="Développeur web passionné - Portfolio, projets créatifs, gaming et blog technique" />
 </svelte:head>
 
 <div class="min-h-screen bg-background profile-transition {$profile ? `profile-${$profile}` : ''}">
@@ -68,13 +68,13 @@
 				<div class="flex flex-col md:flex-row items-center justify-between">
 					<div class="flex items-center space-x-2 mb-4 md:mb-0">
 						<span class="text-2xl">🚀</span>
-						<span class="font-semibold text-foreground">WeCraft</span>
+						<span class="font-semibold text-foreground">Nicolas Paulus</span>
 					</div>
 
 					<div
 						class="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 text-sm text-muted-foreground"
 					>
-						<p>&copy; 2024 WeCraft. Tous droits réservés.</p>
+						<p>&copy; 2024 Nicolas Paulus. Tous droits réservés.</p>
 						<div class="flex space-x-4">
 							<a
 								href={page.url.pathname === '/' ? undefined : '/'}
