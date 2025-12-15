@@ -97,9 +97,16 @@ Note Supabase : `@supabase/auth-helpers-sveltekit` est déprécié. L’approche
 ### WIP : wiring app → DB/RPC
 - `/lab/idlecraft/app` est branchée côté serveur via :
   - `src/routes/lab/idlecraft/(app)/app/+page.server.ts`
-  - affichage “debug” : player + inventaire + retour du tick
+  - affichage "debug" : player + inventaire + retour du tick
 
-Note : juste après une première connexion, le player est créé avec `last_tick_at = now()`, donc un premier `tick_offline` peut retourner `elapsed_seconds = 0`. Pour valider rapidement le tick : attendre 3–10 secondes, rafraîchir `/lab/idlecraft/app`, ou fermer l’onglet et revenir plus tard.
+Note : juste après une première connexion, le player est créé avec `last_tick_at = now()`, donc un premier `tick_offline` peut retourner `elapsed_seconds = 0`. Pour valider rapidement le tick : attendre 3–10 secondes, rafraîchir `/lab/idlecraft/app`, ou fermer l'onglet et revenir plus tard.
+
+### UI/UX Dashboard (implémenté)
+- **Bouton Sync Offline** : permet de déclencher manuellement le tick
+- **Animations** : gain d'or avec animation fly quand les ressources sont créditées
+- **Icônes** : ressources représentées par des icônes Lucide (Coins, Trees, Gem)
+- **Design moderne** : cartes avec hover effects et formatage des nombres
+- **Feedback visuel** : état de chargement et transitions fluides
 
 ---
 

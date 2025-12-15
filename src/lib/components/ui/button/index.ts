@@ -1,4 +1,5 @@
 import { type VariantProps, tv } from 'tailwind-variants';
+import Button from './button.svelte';
 
 /**
  * Définition des classes Tailwind (via `tailwind-variants`) pour le composant `Button`.
@@ -34,3 +35,6 @@ export const buttonVariants = tv({
  * Types des props de variants (`variant`/`size`) dérivés de `buttonVariants`.
  */
 export type ButtonVariants = VariantProps<typeof buttonVariants>;
+
+// Export du composant Button
+export { Button };
