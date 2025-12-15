@@ -13,9 +13,9 @@
 		if (profileName && browser) {
 			// Mapper les noms de profil (gaming -> gamer)
 			const mappedProfile = profileName === 'gaming' ? 'gamer' : profileName;
-			await profile.switch(mappedProfile as any);
+			await profile.switch(mappedProfile as 'pro' | 'gamer' | 'lambda');
 		}
-		
+
 		// Naviguer vers l'URL
 		if (url.startsWith('/')) {
 			goto(url);
@@ -128,7 +128,12 @@
 										<Button variant="outline" size="sm" asChild>
 											<a href="/projects/{project.slug}">Détails</a>
 										</Button>
-										<Button variant="ghost" size="sm" onclick={() => applyProfileAndNavigate(project.liveUrl, project.profile)} aria-label="Voir le projet en direct">
+										<Button
+											variant="ghost"
+											size="sm"
+											onclick={() => applyProfileAndNavigate(project.liveUrl, project.profile)}
+											aria-label="Voir le projet en direct"
+										>
 											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path
 													stroke-linecap="round"
@@ -265,7 +270,11 @@
 								<Button variant="outline" size="sm" asChild>
 									<a href="/projects/{project.slug}">Détails</a>
 								</Button>
-								<Button variant="ghost" size="sm" onclick={() => applyProfileAndNavigate(project.liveUrl, project.profile)}>
+								<Button
+									variant="ghost"
+									size="sm"
+									onclick={() => applyProfileAndNavigate(project.liveUrl, project.profile)}
+								>
 									<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path
 											stroke-linecap="round"

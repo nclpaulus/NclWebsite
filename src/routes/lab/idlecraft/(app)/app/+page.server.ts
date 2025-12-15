@@ -32,7 +32,7 @@ type Player = {
  */
 export const load: PageServerLoad = async ({ locals }) => {
 	// Ensure the player exists (first login bootstrap)
-	const player = await idlecraftRpc.createPlayerIfMissing(locals) as Player;
+	const player = (await idlecraftRpc.createPlayerIfMissing(locals)) as Player;
 
 	// Apply offline tick (safe to call on every page load)
 	const tick = await idlecraftRpc.tickOffline(locals);
@@ -71,13 +71,15 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	if (ownedError) throw ownedError;
 
-	const ownedUpgradeIds = new Set((ownedUpgrades as Array<{ upgrade_id: string }>).map(u => u.upgrade_id));
+	const ownedUpgradeIds = new Set(
+		(ownedUpgrades as Array<{ upgrade_id: string }>).map((u) => u.upgrade_id)
+	);
 
 	return {
 		player: refreshedPlayer,
 		inventory,
 		tick,
-		upgrades: upgrades.map(upgrade => ({
+		upgrades: upgrades.map((upgrade) => ({
 			...upgrade,
 			owned: ownedUpgradeIds.has(upgrade.id)
 		}))
@@ -95,7 +97,7 @@ export const actions: Actions = {
 	 */
 	sync: async ({ locals }) => {
 		const tick = await idlecraftRpc.tickOffline(locals);
-		
+
 		// Read updated player state
 		const user = await locals.getUser();
 		const { data: player } = await locals.supabase
@@ -109,7 +111,7 @@ export const actions: Actions = {
 			.from('inventory_items')
 			.select('item_key, qty')
 			.eq('player_id', player?.id || '');
-			
+
 		return { success: true, tick, player, inventory: inventory || [] };
 	},
 
@@ -124,7 +126,7 @@ export const actions: Actions = {
 
 		try {
 			const result = await idlecraftRpc.buyFarmUpgrade(locals, { p_upgrade_key: upgradeKey });
-			
+
 			// Read updated player state
 			const user = await locals.getUser();
 			const { data: player } = await locals.supabase
@@ -163,22 +165,13 @@ export const actions: Actions = {
 			}
 
 			// Supprimer les upgrades du joueur
-			await locals.supabase
-				.from('player_farm_upgrades')
-				.delete()
-				.eq('player_id', player.id);
+			await locals.supabase.from('player_farm_upgrades').delete().eq('player_id', player.id);
 
 			// Supprimer l'inventaire
-			await locals.supabase
-				.from('inventory_items')
-				.delete()
-				.eq('player_id', player.id);
+			await locals.supabase.from('inventory_items').delete().eq('player_id', player.id);
 
 			// Supprimer le joueur
-			await locals.supabase
-				.from('players')
-				.delete()
-				.eq('id', player.id);
+			await locals.supabase.from('players').delete().eq('id', player.id);
 
 			return { success: true, deleted: true };
 		} catch (error) {
@@ -207,7 +200,7 @@ export const actions: Actions = {
 				.select('gold')
 				.eq('user_id', user.id)
 				.single();
-			
+
 			const { data: player } = await locals.supabase
 				.from('players')
 				.update({

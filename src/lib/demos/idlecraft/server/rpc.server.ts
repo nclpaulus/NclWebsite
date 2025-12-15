@@ -54,14 +54,14 @@ export const idlecraftRpc = {
 	 * @returns Données du joueur créé ou existant
 	 */
 	createPlayerIfMissing: (locals: App.Locals) => rpcOrThrow(locals, 'create_player_if_missing'),
-	
+
 	/**
 	 * Applique le tick offline pour créditer les ressources passives
 	 * @param locals - Contexte SvelteKit côté serveur
 	 * @returns Informations sur le tick appliqué (secondes écoulées/créditées)
 	 */
 	tickOffline: (locals: App.Locals) => rpcOrThrow(locals, 'tick_offline'),
-	
+
 	/**
 	 * Crée une nouvelle offre sur le marché
 	 * @param locals - Contexte SvelteKit côté serveur
@@ -69,7 +69,7 @@ export const idlecraftRpc = {
 	 * @returns Offre créée sur le marché
 	 */
 	postListing: (locals: App.Locals, args: RpcArgs) => rpcOrThrow(locals, 'post_listing', args),
-	
+
 	/**
 	 * Achète une offre existante sur le marché
 	 * @param locals - Contexte SvelteKit côté serveur
@@ -77,7 +77,7 @@ export const idlecraftRpc = {
 	 * @returns Résultat de la transaction
 	 */
 	buyListing: (locals: App.Locals, args: RpcArgs) => rpcOrThrow(locals, 'buy_listing', args),
-	
+
 	/**
 	 * Annule une offre sur le marché
 	 * @param locals - Contexte SvelteKit côté serveur
@@ -85,7 +85,7 @@ export const idlecraftRpc = {
 	 * @returns Offre annulée
 	 */
 	cancelListing: (locals: App.Locals, args: RpcArgs) => rpcOrThrow(locals, 'cancel_listing', args),
-	
+
 	/**
 	 * Craft un item selon une recette
 	 * @param locals - Contexte SvelteKit côté serveur
@@ -93,7 +93,7 @@ export const idlecraftRpc = {
 	 * @returns Items craftés
 	 */
 	craftItem: (locals: App.Locals, args: RpcArgs) => rpcOrThrow(locals, 'craft_item', args),
-	
+
 	/**
 	 * Achète une amélioration de ferme
 	 * Vérifie les coûts, les prérequis et met à jour les taux de production
@@ -101,5 +101,6 @@ export const idlecraftRpc = {
 	 * @param args - Arguments de l'achat (clé de l'upgrade)
 	 * @returns Résultat de l'achat avec nouvelles valeurs de production
 	 */
-	buyFarmUpgrade: (locals: App.Locals, args: RpcArgs) => rpcOrThrow(locals, 'buy_farm_upgrade', args)
+	buyFarmUpgrade: (locals: App.Locals, args: RpcArgs) =>
+		rpcOrThrow(locals, 'buy_farm_upgrade', args)
 };

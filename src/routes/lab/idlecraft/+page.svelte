@@ -21,7 +21,10 @@
 
 <svelte:head>
 	<title>IdleCraft - Lab - NPaulusWebsite</title>
-	<meta name="description" content="IdleCraft: mini-jeu idle avec auth Supabase, persistance, RLS et RPC" />
+	<meta
+		name="description"
+		content="IdleCraft: mini-jeu idle avec auth Supabase, persistance, RLS et RPC"
+	/>
 </svelte:head>
 
 <div class="container mx-auto px-4 py-10">
@@ -44,7 +47,11 @@
 				<CardContent class="p-6 space-y-4">
 					<h2 class="text-xl font-semibold">Connexion</h2>
 					<div class="space-y-2">
-						<Button class="w-full" onclick={() => signInWith('google')} disabled={loadingProvider !== null}>
+						<Button
+							class="w-full"
+							onclick={() => signInWith('google')}
+							disabled={loadingProvider !== null}
+						>
 							{loadingProvider === 'google' ? 'Redirection…' : 'Continuer avec Google'}
 						</Button>
 						<Button

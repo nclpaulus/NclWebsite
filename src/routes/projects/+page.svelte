@@ -4,15 +4,13 @@
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { Card, CardContent } from '$lib/components/ui/card';
-	
+
 	// État pour le filtre actif
 	let activeFilter: 'all' | 'real' | 'mock' | 'demo' = 'all';
-	
+
 	// Projets filtrés selon le filtre actif
-	$: filteredProjects = activeFilter === 'all' 
-		? projects 
-		: getProjectsByType(activeFilter);
-	
+	$: filteredProjects = activeFilter === 'all' ? projects : getProjectsByType(activeFilter);
+
 	// Fonction pour changer le filtre
 	function setFilter(filter: typeof activeFilter) {
 		activeFilter = filter;

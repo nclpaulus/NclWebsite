@@ -4,15 +4,14 @@
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { Card, CardContent } from '$lib/components/ui/card';
-	
+
 	// État pour le filtre actif
 	let activeFilter: 'all' | 'demo' | 'tool' | 'poc' = 'all';
-	
+
 	// Expériences filtrées selon le filtre actif
-	$: filteredExperiments = activeFilter === 'all' 
-		? experiments 
-		: getExperimentsByType(activeFilter);
-	
+	$: filteredExperiments =
+		activeFilter === 'all' ? experiments : getExperimentsByType(activeFilter);
+
 	// Fonction pour changer le filtre
 	function setFilter(filter: typeof activeFilter) {
 		activeFilter = filter;

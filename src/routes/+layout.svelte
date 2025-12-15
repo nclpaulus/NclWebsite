@@ -33,7 +33,10 @@
 	<link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png" />
 	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 	<title>Nicolas Paulus - Portfolio & Projets</title>
-	<meta name="description" content="Développeur web passionné - Portfolio, projets créatifs, gaming et blog technique" />
+	<meta
+		name="description"
+		content="Développeur web passionné - Portfolio, projets créatifs, gaming et blog technique"
+	/>
 </svelte:head>
 
 <div class="min-h-screen bg-background profile-transition {$profile ? `profile-${$profile}` : ''}">
