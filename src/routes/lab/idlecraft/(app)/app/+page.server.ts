@@ -54,10 +54,33 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	if (inventoryError) throw inventoryError;
 
+	// Load available upgrades
+	const { data: upgrades, error: upgradesError } = await locals.supabase
+		.from('farm_upgrades')
+		.select('*')
+		.order('type', { ascending: true })
+		.order('level', { ascending: true });
+
+	if (upgradesError) throw upgradesError;
+
+	// Load player's owned upgrades
+	const { data: ownedUpgrades, error: ownedError } = await locals.supabase
+		.from('player_farm_upgrades')
+		.select('upgrade_id')
+		.eq('player_id', player.id);
+
+	if (ownedError) throw ownedError;
+
+	const ownedUpgradeIds = new Set((ownedUpgrades as Array<{ upgrade_id: string }>).map(u => u.upgrade_id));
+
 	return {
 		player: refreshedPlayer,
 		inventory,
-		tick
+		tick,
+		upgrades: upgrades.map(upgrade => ({
+			...upgrade,
+			owned: ownedUpgradeIds.has(upgrade.id)
+		}))
 	};
 };
 
@@ -80,7 +103,124 @@ export const actions: Actions = {
 			.select('id,user_id,display_name,gold,gold_per_sec,wood_per_sec,ore_per_sec,last_tick_at')
 			.eq('user_id', user?.id)
 			.single();
+
+		// Read updated inventory
+		const { data: inventory } = await locals.supabase
+			.from('inventory_items')
+			.select('item_key, qty')
+			.eq('player_id', player?.id || '');
 			
-		return { success: true, tick, player };
+		return { success: true, tick, player, inventory: inventory || [] };
+	},
+
+	/**
+	 * Achète une upgrade de ferme
+	 * @param upgradeKey - Clé de l'upgrade à acheter
+	 * @returns {Object} Résultat de l'achat avec nouvelles valeurs
+	 */
+	buyUpgrade: async ({ locals, request }) => {
+		const formData = await request.formData();
+		const upgradeKey = formData.get('upgradeKey') as string;
+
+		try {
+			const result = await idlecraftRpc.buyFarmUpgrade(locals, { p_upgrade_key: upgradeKey });
+			
+			// Read updated player state
+			const user = await locals.getUser();
+			const { data: player } = await locals.supabase
+				.from('players')
+				.select('id,user_id,display_name,gold,gold_per_sec,wood_per_sec,ore_per_sec,last_tick_at')
+				.eq('user_id', user?.id)
+				.single();
+
+			return { success: true, result, player };
+		} catch (error) {
+			return { success: false, error: error instanceof Error ? error.message : String(error) };
+		}
+	},
+
+	/**
+	 * Supprime le compte du joueur (pour les tests)
+	 * Supprime complètement le joueur, ses upgrades et son inventaire
+	 * @returns {Object} Confirmation de suppression
+	 */
+	resetAccount: async ({ locals }) => {
+		const user = await locals.getUser();
+		if (!user) {
+			return { success: false, error: 'UNAUTHORIZED' };
+		}
+
+		try {
+			// Récupérer le joueur
+			const { data: player } = await locals.supabase
+				.from('players')
+				.select('id')
+				.eq('user_id', user.id)
+				.single();
+
+			if (!player) {
+				return { success: false, error: 'PLAYER_NOT_FOUND' };
+			}
+
+			// Supprimer les upgrades du joueur
+			await locals.supabase
+				.from('player_farm_upgrades')
+				.delete()
+				.eq('player_id', player.id);
+
+			// Supprimer l'inventaire
+			await locals.supabase
+				.from('inventory_items')
+				.delete()
+				.eq('player_id', player.id);
+
+			// Supprimer le joueur
+			await locals.supabase
+				.from('players')
+				.delete()
+				.eq('id', player.id);
+
+			return { success: true, deleted: true };
+		} catch (error) {
+			return { success: false, error: error instanceof Error ? error.message : String(error) };
+		}
+	},
+
+	/**
+	 * Donne de l'or au joueur (pour les tests)
+	 * @param amount - Quantité d'or à donner
+	 * @returns {Object} Nouvel état du joueur avec l'or ajouté
+	 */
+	giveGold: async ({ locals, request }) => {
+		const user = await locals.getUser();
+		if (!user) {
+			return { success: false, error: 'UNAUTHORIZED' };
+		}
+
+		try {
+			const formData = await request.formData();
+			const amount = parseInt(formData.get('amount') as string) || 500;
+
+			// Ajouter l'or au joueur
+			const { data: currentGold } = await locals.supabase
+				.from('players')
+				.select('gold')
+				.eq('user_id', user.id)
+				.single();
+			
+			const { data: player } = await locals.supabase
+				.from('players')
+				.update({
+					gold: (currentGold as { gold: number }).gold + amount,
+					updated_at: new Date().toISOString()
+				})
+				.eq('user_id', user.id)
+				.select('id,user_id,display_name,gold,gold_per_sec,wood_per_sec,ore_per_sec,last_tick_at')
+				.single();
+
+			return { success: true, player };
+		} catch (error) {
+			return { success: false, error: error instanceof Error ? error.message : String(error) };
+		}
 	}
 };

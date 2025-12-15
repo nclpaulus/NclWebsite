@@ -108,6 +108,13 @@ Note : juste après une première connexion, le player est créé avec `last_tic
 - **Design moderne** : cartes avec hover effects et formatage des nombres
 - **Feedback visuel** : état de chargement et transitions fluides
 
+### Système d'Upgrades (implémenté)
+- **Tables** : `farm_upgrades` (catalogue public) et `player_farm_upgrades (privé)`
+- **RPC sécurisée** : `buy_farm_upgrade` avec transaction atomique
+- **Prérequis** : système simple avec `required_upgrade_key`
+- **UI interactive** : liste des upgrades avec boutons d'achat désactivés si fonds insuffisants
+- **Mise à jour en temps réel** : les taux de production sont mis à jour après achat
+
 ---
 
 ## Prochaines étapes (recommandées)

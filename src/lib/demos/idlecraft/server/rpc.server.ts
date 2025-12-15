@@ -96,9 +96,10 @@ export const idlecraftRpc = {
 	
 	/**
 	 * Achète une amélioration de ferme
+	 * Vérifie les coûts, les prérequis et met à jour les taux de production
 	 * @param locals - Contexte SvelteKit côté serveur
-	 * @param args - Arguments de l'achat (type d'amélioration)
-	 * @returns Amélioration achetée
+	 * @param args - Arguments de l'achat (clé de l'upgrade)
+	 * @returns Résultat de l'achat avec nouvelles valeurs de production
 	 */
 	buyFarmUpgrade: (locals: App.Locals, args: RpcArgs) => rpcOrThrow(locals, 'buy_farm_upgrade', args)
 };
