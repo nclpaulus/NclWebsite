@@ -1,3 +1,5 @@
+import type { Profile } from '$lib/services/profileDB';
+
 /** Expérience de laboratoire (outil, démo, POC). */
 export interface LabExperiment {
 	slug: string;
@@ -29,6 +31,7 @@ export interface Project {
 	client?: string;
 	status: 'completed' | 'in-progress' | 'prototype';
 	tags: string[];
+	profile?: Profile;
 }
 
 /** Carte de contenu unifié (lab ou projet). */

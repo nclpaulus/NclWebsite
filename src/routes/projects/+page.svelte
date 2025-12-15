@@ -4,6 +4,19 @@
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { Card, CardContent } from '$lib/components/ui/card';
+	
+	// État pour le filtre actif
+	let activeFilter: 'all' | 'real' | 'mock' | 'demo' = 'all';
+	
+	// Projets filtrés selon le filtre actif
+	$: filteredProjects = activeFilter === 'all' 
+		? projects 
+		: getProjectsByType(activeFilter);
+	
+	// Fonction pour changer le filtre
+	function setFilter(filter: typeof activeFilter) {
+		activeFilter = filter;
+	}
 </script>
 
 <svelte:head>
@@ -140,26 +153,30 @@
 			<h2 class="text-xl font-semibold text-foreground mb-4">Tous les projets</h2>
 			<div class="flex flex-wrap gap-2">
 				<Badge
-					variant="secondary"
+					variant={activeFilter === 'all' ? 'default' : 'secondary'}
 					class="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+					onclick={() => setFilter('all')}
 				>
 					Tous ({projects.length})
 				</Badge>
 				<Badge
-					variant="outline"
+					variant={activeFilter === 'real' ? 'default' : 'outline'}
 					class="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+					onclick={() => setFilter('real')}
 				>
 					Réels ({getProjectsByType('real').length})
 				</Badge>
 				<Badge
-					variant="outline"
+					variant={activeFilter === 'mock' ? 'default' : 'outline'}
 					class="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+					onclick={() => setFilter('mock')}
 				>
 					Fictifs ({getProjectsByType('mock').length})
 				</Badge>
 				<Badge
-					variant="outline"
+					variant={activeFilter === 'demo' ? 'default' : 'outline'}
 					class="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+					onclick={() => setFilter('demo')}
 				>
 					Démos ({getProjectsByType('demo').length})
 				</Badge>
@@ -168,7 +185,7 @@
 
 		<!-- All Projects Grid -->
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-			{#each projects as project (project.slug)}
+			{#each filteredProjects as project (project.slug)}
 				<Card class="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
 					<CardContent class="p-6">
 						<!-- Header -->
@@ -278,12 +295,12 @@
 		</div>
 
 		<!-- Empty State -->
-		{#if projects.length === 0}
+		{#if filteredProjects.length === 0}
 			<div class="text-center py-12">
 				<div class="text-6xl mb-4">🚀</div>
-				<h3 class="text-xl font-semibold text-foreground mb-2">Aucun projet pour le moment</h3>
+				<h3 class="text-xl font-semibold text-foreground mb-2">Aucun projet pour ce filtre</h3>
 				<p class="text-muted-foreground">
-					Je travaille actuellement sur de nouveaux projets à partager bientôt !
+					Essayez un autre filtre ou revenez à "Tous" pour voir tous les projets.
 				</p>
 			</div>
 		{/if}

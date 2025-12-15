@@ -14,7 +14,7 @@ export const projects: Project[] = [
 		context:
 			'Projet personnel visant à créer un site web moderne et polyvalent avec gestion multi-profils',
 		techStack: ['SvelteKit', 'TypeScript', 'Tailwind CSS v4', 'shadcn-svelte', 'Vite'],
-		liveUrl: 'https://npaulus.be',
+		liveUrl: 'https://www.npaulus.website',
 		githubUrl: 'https://github.com/nclpaulus/NclWebsite',
 		type: 'real',
 		features: [
@@ -47,7 +47,8 @@ export const projects: Project[] = [
 		],
 		date: '2024-12-08',
 		status: 'completed',
-		tags: ['gaming', 'api', 'dashboard', 'typescript', 'data-visualization']
+		tags: ['gaming', 'api', 'dashboard', 'typescript', 'data-visualization'],
+		profile: 'gamer'
 	},
 	{
 		slug: 'garage-management-system',
