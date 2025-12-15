@@ -4,6 +4,19 @@
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { Card, CardContent } from '$lib/components/ui/card';
+	
+	// État pour le filtre actif
+	let activeFilter: 'all' | 'demo' | 'tool' | 'poc' = 'all';
+	
+	// Expériences filtrées selon le filtre actif
+	$: filteredExperiments = activeFilter === 'all' 
+		? experiments 
+		: getExperimentsByType(activeFilter);
+	
+	// Fonction pour changer le filtre
+	function setFilter(filter: typeof activeFilter) {
+		activeFilter = filter;
+	}
 </script>
 
 <svelte:head>
@@ -32,26 +45,30 @@
 		<!-- Filter Tags -->
 		<div class="mb-8 flex flex-wrap gap-2 justify-center">
 			<Badge
-				variant="secondary"
+				variant={activeFilter === 'all' ? 'default' : 'secondary'}
 				class="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+				onclick={() => setFilter('all')}
 			>
 				Tous ({experiments.length})
 			</Badge>
 			<Badge
-				variant="outline"
+				variant={activeFilter === 'demo' ? 'default' : 'outline'}
 				class="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+				onclick={() => setFilter('demo')}
 			>
 				Démos ({getExperimentsByType('demo').length})
 			</Badge>
 			<Badge
-				variant="outline"
+				variant={activeFilter === 'tool' ? 'default' : 'outline'}
 				class="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+				onclick={() => setFilter('tool')}
 			>
 				Outils ({getExperimentsByType('tool').length})
 			</Badge>
 			<Badge
-				variant="outline"
+				variant={activeFilter === 'poc' ? 'default' : 'outline'}
 				class="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+				onclick={() => setFilter('poc')}
 			>
 				POCs ({getExperimentsByType('poc').length})
 			</Badge>
@@ -59,7 +76,7 @@
 
 		<!-- Experiments Grid -->
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-			{#each experiments as experiment (experiment.slug)}
+			{#each filteredExperiments as experiment (experiment.slug)}
 				<Card class="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
 					<CardContent class="p-6">
 						<!-- Header -->
@@ -155,12 +172,12 @@
 		</div>
 
 		<!-- Empty State -->
-		{#if experiments.length === 0}
+		{#if filteredExperiments.length === 0}
 			<div class="text-center py-12">
 				<div class="text-6xl mb-4">🧪</div>
-				<h3 class="text-xl font-semibold text-foreground mb-2">Aucune expérience pour le moment</h3>
+				<h3 class="text-xl font-semibold text-foreground mb-2">Aucune expérience pour ce filtre</h3>
 				<p class="text-muted-foreground">
-					Je travaille actuellement sur de nouvelles expériences à partager bientôt !
+					Essayez un autre filtre ou revenez à "Tous" pour voir toutes les expériences.
 				</p>
 			</div>
 		{/if}
