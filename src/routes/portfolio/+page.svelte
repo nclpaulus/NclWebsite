@@ -4,6 +4,25 @@
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { Card, CardContent } from '$lib/components/ui/card';
+	import { profile } from '$lib/stores/profile';
+	import { goto } from '$app/navigation';
+	import { browser } from '$app/environment';
+
+	/** Applique un profil et navigue vers l'URL */
+	async function applyProfileAndNavigate(url: string, profileName?: string) {
+		if (profileName && browser) {
+			// Mapper les noms de profil (gaming -> gamer)
+			const mappedProfile = profileName === 'gaming' ? 'gamer' : profileName;
+			await profile.switch(mappedProfile as any);
+		}
+		
+		// Naviguer vers l'URL
+		if (url.startsWith('/')) {
+			goto(url);
+		} else {
+			window.open(url, '_blank', 'noopener,noreferrer');
+		}
+	}
 </script>
 
 <svelte:head>
@@ -109,22 +128,15 @@
 										<Button variant="outline" size="sm" asChild>
 											<a href="/projects/{project.slug}">Détails</a>
 										</Button>
-										<Button variant="ghost" size="sm" asChild>
-											<a
-												href={project.liveUrl}
-												target="_blank"
-												rel="noopener noreferrer"
-												aria-label="Voir le projet en direct"
-											>
-												<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-													<path
-														stroke-linecap="round"
-														stroke-linejoin="round"
-														stroke-width="2"
-														d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-													/>
-												</svg>
-											</a>
+										<Button variant="ghost" size="sm" onclick={() => applyProfileAndNavigate(project.liveUrl, project.profile)} aria-label="Voir le projet en direct">
+											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+												/>
+											</svg>
 										</Button>
 									</div>
 								</div>
@@ -253,22 +265,15 @@
 								<Button variant="outline" size="sm" asChild>
 									<a href="/projects/{project.slug}">Détails</a>
 								</Button>
-								<Button variant="ghost" size="sm" asChild>
-									<a
-										href={project.liveUrl}
-										target="_blank"
-										rel="noopener noreferrer"
-										aria-label="Voir le projet en direct"
-									>
-										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="2"
-												d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-											/>
-										</svg>
-									</a>
+								<Button variant="ghost" size="sm" onclick={() => applyProfileAndNavigate(project.liveUrl, project.profile)}>
+									<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+										/>
+									</svg>
 								</Button>
 							</div>
 						</div>

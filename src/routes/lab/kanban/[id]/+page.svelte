@@ -1,5 +1,4 @@
 <script lang="ts">
-	/** Page détail d’un tableau Kanban avec gestion d’erreur et loading. */
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { kanbanStore } from '$lib/stores/kanban.svelte';
@@ -13,7 +12,8 @@
 
 	onMount(async () => {
 		try {
-			await kanbanStore.init();
+			// Initialize the store if not already done
+			kanbanStore.initializeBoards();
 
 			// Check if board exists
 			if (id) {
@@ -33,7 +33,7 @@
 </script>
 
 <svelte:head>
-	<title>Kanban Board - WeCraft</title>
+	<title>Kanban Board - NPaulusWebsite</title>
 	<meta
 		name="description"
 		content="Tableau Kanban collaboratif avec drag & drop et gestion de projet"

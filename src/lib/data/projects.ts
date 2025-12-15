@@ -1,4 +1,7 @@
 import type { Project } from '$lib/types/content';
+import { GARAGE_BASE_PATH } from '$lib/demos/garage';
+import { KANBAN_BASE_PATH } from '$lib/demos/kanban';
+import { WEATHER_BASE_PATH } from '$lib/demos/weather';
 
 /**
  * Données statiques: liste des projets affichés dans la section Projects/Portfolio.
@@ -11,7 +14,7 @@ export const projects: Project[] = [
 		context:
 			'Projet personnel visant à créer un site web moderne et polyvalent avec gestion multi-profils',
 		techStack: ['SvelteKit', 'TypeScript', 'Tailwind CSS v4', 'shadcn-svelte', 'Vite'],
-		liveUrl: 'https://npaulus.be',
+		liveUrl: 'https://www.npaulus.website',
 		githubUrl: 'https://github.com/nclpaulus/NclWebsite',
 		type: 'real',
 		features: [
@@ -44,7 +47,8 @@ export const projects: Project[] = [
 		],
 		date: '2024-12-08',
 		status: 'completed',
-		tags: ['gaming', 'api', 'dashboard', 'typescript', 'data-visualization']
+		tags: ['gaming', 'api', 'dashboard', 'typescript', 'data-visualization'],
+		profile: 'gamer'
 	},
 	{
 		slug: 'garage-management-system',
@@ -54,7 +58,7 @@ export const projects: Project[] = [
 		context: 'Projet fictif pour démontrer la capacité à créer une solution business complète',
 		client: 'AutoPro Garage (fictif)',
 		techStack: ['SvelteKit', 'TypeScript', 'Node.js', 'SQLite', 'Tailwind CSS'],
-		liveUrl: '/garage',
+		liveUrl: GARAGE_BASE_PATH,
 		githubUrl: 'https://github.com/nclpaulus/garage-management',
 		type: 'mock',
 		features: [
@@ -76,7 +80,7 @@ export const projects: Project[] = [
 		context:
 			"Clone simplifié de Trello/ClickUp démontrant les compétences en développement d'applications collaboratives",
 		techStack: ['SvelteKit', 'TypeScript', 'WebSocket', 'PostgreSQL', 'Docker'],
-		liveUrl: '/kanban',
+		liveUrl: KANBAN_BASE_PATH,
 		githubUrl: 'https://github.com/nclpaulus/task-manager',
 		type: 'demo',
 		features: [
@@ -96,7 +100,7 @@ export const projects: Project[] = [
 		description: 'Dashboard météo avec prévisions détaillées et visualisations interactives',
 		context: 'Exploration des APIs météo et techniques de data visualization avec SvelteKit',
 		techStack: ['SvelteKit', 'TypeScript', 'OpenWeather API', 'D3.js', 'PWA'],
-		liveUrl: '/weather',
+		liveUrl: WEATHER_BASE_PATH,
 		githubUrl: 'https://github.com/nclpaulus/weather-dashboard',
 		type: 'demo',
 		features: [
